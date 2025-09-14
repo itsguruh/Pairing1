@@ -73,39 +73,39 @@ var randomItem = selectRandomItem(items);
                         const { upload } = require('./mega');
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
-                        let md = "Caseyrhodes~" + string_session;
+                        let md = "CRYPTIX-MD~" + string_session;
                         
                         // Send session ID first
                         let codeMsg = await sock.sendMessage(sock.user.id, { text: md });
                         
                         // Create newsletter message with image and text
-                        let desc = `*🎀 Hello there ! 🎀* 
+                        let desc = `*😉 Hello there ! 💕* 
 
-> Your session ID🌸♻️: ${md}
+> Your session ID🌀♻️: ${md}
 > *DO NOT SHARE YOUR SESSION ID WITH ANYONE🎉*
-*Thanks for using Caseyrhodes Xmd🌸* 
+*Thanks for using CRYPTIX-MD❤️* 
 *Join WhatsApp Channel: ⤵️*
 > https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s
 Don't forget to fork the repo ⬇️
-> *© Powered by Caseyrhodes tech*`; 
+> *© Powered by Official Guru*`; 
                         
                         // Send image with caption
                         await sock.sendMessage(sock.user.id, {
-                            image: { url: 'https://files.catbox.moe/qqi4ns.jpg' },
+                            image: { url: 'https://files.catbox.moe/f6q239.jpg' },
                             caption: desc,
                             contextInfo: {
                                 forwardingScore: 1,
                                 isForwarded: true,
                                 forwardedNewsletterMessageInfo: {
                                     newsletterJid: '120363405400048680@newsletter',
-                                    newsletterName: 'CASEYRHODES-XMD',
+                                    newsletterName: 'CRYPTIX-MD',
                                     serverMessageId: -1
                                 }
                             }
                         });
                     } catch (e) {
                         console.error("Error:", e);
-                        let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/caseyweb/CASEYRHODES-XMD`;
+                        let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/itsguruh/CRYPTIX-MD`;
                         await sock.sendMessage(sock.user.id, {
                             text: errorMsg,
                             contextInfo: {
@@ -113,7 +113,7 @@ Don't forget to fork the repo ⬇️
                                 isForwarded: true,
                                 forwardedNewsletterMessageInfo: {
                                     newsletterJid: '1120363405400048680@newsletter',
-                                    newsletterName: 'CASEYRHODES-XMD',
+                                    newsletterName: 'CRYPTIX-MD',
                                     serverMessageId: -1
                                 }
                             }
