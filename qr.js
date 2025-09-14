@@ -116,7 +116,7 @@ Dont forget to fork the repo ⬇️
 
 https://github.com/itsguruh/CRYPTIX-MD 
 
-> *© Powered BY MalvinTechX 🖤*`;
+> *© Powered BY CRYPTIX-MD🖤*`;
                             await sock.sendMessage(sock.user.id, {
 text: desc,
 contextInfo: {
