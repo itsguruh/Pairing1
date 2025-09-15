@@ -6,97 +6,126 @@
   <title>CRYPTIX-MD Pairing</title>
   <style>
     body {
+      background-color: #fff;
+      color: #3e2723; /* dark brown */
       font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #111; /* black */
-      color: #fff; /* white text */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       margin: 0;
-      padding: 0;
     }
+
+    img {
+      width: 120px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      border: 3px solid #3e2723;
+    }
+
     h1 {
-      color: #a0522d; /* brown */
-      margin-top: 40px;
+      color: #3e2723;
+      margin-bottom: 20px;
     }
+
     input {
       padding: 10px;
-      margin: 15px 0;
-      border: 2px solid #a0522d;
-      border-radius: 6px;
       width: 250px;
-      background: #fff;
-      color: #000;
+      border: 2px solid #3e2723;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      font-size: 16px;
     }
+
     button {
-      padding: 10px 20px;
-      background-color: #a0522d; /* brown */
-      color: #fff;
+      background-color: #3e2723; /* brown */
+      color: white;
       border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background-color: #fff;
-      color: #000;
+      background-color: #000; /* black on hover */
     }
-    button:active {
-      background-color: #000;
-      color: #fff;
-    }
+
     #result {
       margin-top: 20px;
-      font-size: 18px;
+      font-weight: bold;
+      color: #000;
     }
+
     #music-controls {
-      margin-top: 40px;
+      margin-top: 25px;
     }
   </style>
 </head>
 <body>
-  <h1>CRYPTIX-MD<br>Pairing Code</h1>
 
-  <p>Enter your number with country code to generate a pairing code:</p>
+  <!-- Bot Logo -->
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot Logo">
 
-  <input type="text" id="number" placeholder="254700000000" />
-  <br>
-  <button onclick="getCode()">Get Pairing Code</button>
+  <h1>Pair Your WhatsApp</h1>
 
+  <!-- Phone input -->
+  <input id="number" type="text" placeholder="Enter your WhatsApp number">
+
+  <!-- Buttons -->
+  <div>
+    <button onclick="generateCode()">Get Pairing Code</button>
+    <button onclick="fillMyNumber()">My Number</button>
+  </div>
+
+  <!-- Result -->
   <div id="result"></div>
 
   <!-- Music controls -->
   <div id="music-controls">
-    <button onclick="toggleMusic()">▶ Play / ⏸ Pause Music</button>
-    <audio id="bg-music" loop>
-      <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-    </audio>
+    <button onclick="toggleMusic()">⏯ Play / Pause Music</button>
   </div>
 
-  <script>
-    async function getCode() {
-      const number = document.getElementById("number").value.trim();
-      const resultDiv = document.getElementById("result");
+  <!-- Background music -->
+  <audio id="bg-music" autoplay loop>
+    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
 
-      if (!number) {
-        resultDiv.innerHTML = "⚠️ Please enter a valid number.";
+  <script>
+    // Replace with your actual number
+    const myNumber = "2547XXXXXXXX"; 
+
+    function fillMyNumber() {
+      document.getElementById("number").value = myNumber;
+    }
+
+    async function generateCode() {
+      const num = document.getElementById("number").value;
+      if (!num) {
+        alert("Please enter a number first!");
         return;
       }
 
-      try {
-        // ✅ Fixed: call backend API
-        const response = await fetch(`/api/pair?number=${number}`);
-        const data = await response.json();
+      document.getElementById("result").innerText = "Generating code...";
 
+      try {
+        const response = await fetch(`/code?number=${encodeURIComponent(num)}`);
+        const data = await response.json();
         if (data.code) {
-          resultDiv.innerHTML = `✅ Your Pairing Code: <b>${data.code}</b>`;
+          document.getElementById("result").innerText = "Your Pairing Code: " + data.code;
         } else {
-          resultDiv.innerHTML = `⚠️ Error: ${JSON.stringify(data)}`;
+          document.getElementById("result").innerText = "Error: Service unavailable.";
         }
       } catch (err) {
-        resultDiv.innerHTML = `⚠️ Error: ${err}`;
+        document.getElementById("result").innerText = "Error connecting to server.";
       }
     }
 
-    // 🎵 Play / Pause music
+    // Music controls
     function toggleMusic() {
       const music = document.getElementById("bg-music");
       if (music.paused) {
@@ -106,5 +135,6 @@
       }
     }
   </script>
+
 </body>
 </html>
