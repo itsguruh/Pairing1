@@ -15,19 +15,22 @@
       overflow: hidden;
     }
 
+    /* Floating glowing stars */
     .stars {
       position: absolute;
       width: 100%;
       height: 100%;
+      background: transparent;
       z-index: -1;
       overflow: hidden;
     }
     .star {
       position: absolute;
-      width: 2px;
-      height: 2px;
+      width: 3px;
+      height: 3px;
       background: white;
       border-radius: 50%;
+      box-shadow: 0 0 6px white;
       animation: moveStar 10s linear infinite;
     }
     @keyframes moveStar {
@@ -55,20 +58,16 @@
       color: #d2b48c;
     }
 
-    .input-box {
-      margin: 20px 0;
-    }
-
     input {
       padding: 10px;
       width: 250px;
       border: 2px solid #d2b48c;
       border-radius: 8px;
-      outline: none;
       font-size: 16px;
       text-align: center;
     }
 
+    /* Old button style */
     .btn {
       display: block;
       margin: 15px auto;
@@ -82,12 +81,14 @@
       cursor: pointer;
       transition: 0.3s;
       text-decoration: none;
+      box-shadow: 0 0 10px #d2b48c;
     }
     .btn:hover {
       background: #d2b48c;
       color: black;
     }
 
+    /* Code + countdown */
     .code-box {
       margin-top: 20px;
       padding: 15px;
@@ -99,12 +100,13 @@
       margin-right: auto;
       font-size: 18px;
       font-weight: bold;
-      white-space: pre-line;
+    }
+    .countdown {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #fff;
     }
 
-    .music-controls {
-      margin-top: 20px;
-    }
     .pause-btn {
       background: #d2b48c;
       border: none;
@@ -114,9 +116,6 @@
       cursor: pointer;
       font-weight: bold;
       transition: 0.3s;
-    }
-    .pause-btn:hover {
-      background: white;
     }
   </style>
 </head>
@@ -128,18 +127,18 @@
     <h1>CRYPTIX-MD Pairing</h1>
     <p>Enter your WhatsApp number below 👇</p>
 
-    <div class="input-box">
-      <input type="text" id="number" placeholder="e.g. 2547xxxxxxx">
-    </div>
-
+    <input type="text" id="number" placeholder="e.g. 2547xxxxxxx">
     <button class="btn" onclick="generateCode()">Generate Pairing Code</button>
 
     <div id="code-box" class="code-box" style="display: none;"></div>
+    <div id="countdown" class="countdown" style="display: none;"></div>
 
+    <!-- Extra buttons -->
     <a href="https://github.com/itsguruh/Pairing1" target="_blank" class="btn">🌐 GitHub</a>
     <a href="https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s" target="_blank" class="btn">📢 WhatsApp Channel</a>
     <a href="https://wa.me/254105521300" target="_blank" class="btn">📞 Contact Owner</a>
 
+    <!-- Music -->
     <div class="music-controls">
       <audio id="bg-music" autoplay loop>
         <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
@@ -149,7 +148,7 @@
   </div>
 
   <script>
-    // Floating stars
+    // Stars
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 50; i++) {
       const star = document.createElement('div');
@@ -160,40 +159,43 @@
       starsContainer.appendChild(star);
     }
 
-    let refreshInterval;
+    let countdownInterval;
 
-    async function generateCode(auto = false) {
+    async function generateCode() {
       const number = document.getElementById('number').value;
-      if (!number && !auto) {
+      if (!number) {
         alert('Please enter a number!');
         return;
       }
 
       try {
-        const response = await fetch(`/code?number=${encodeURIComponent(number)}`);
+        const response = await fetch(`/pair?number=${encodeURIComponent(number)}`);
         const data = await response.json();
 
         const codeBox = document.getElementById('code-box');
+        const countdownBox = document.getElementById('countdown');
+
         codeBox.style.display = 'block';
+        countdownBox.style.display = 'block';
 
-        if (data.code) {
-          codeBox.innerText = "🔑 Pairing Code: " + data.code + "\n(Refreshes every 60s)";
-        } else if (data.error) {
-          codeBox.innerText = data.error + "\nRetrying in 60s...";
-        } else {
-          codeBox.innerText = "❗ Unknown response, retrying in 60s...";
-        }
+        codeBox.innerText = "🔑 Pairing Code: " + data.code;
 
-        // auto-refresh every 60s
-        clearInterval(refreshInterval);
-        refreshInterval = setInterval(() => generateCode(true), 60000);
+        // Start countdown
+        let timeLeft = 60;
+        countdownBox.innerText = "⏳ Expires in: " + timeLeft + "s";
+
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+          timeLeft--;
+          countdownBox.innerText = "⏳ Expires in: " + timeLeft + "s";
+          if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            generateCode(); // Auto-refresh
+          }
+        }, 1000);
 
       } catch (err) {
-        const codeBox = document.getElementById('code-box');
-        codeBox.style.display = 'block';
-        codeBox.innerText = "❗ Error connecting to server. Retrying in 60s...";
-        clearInterval(refreshInterval);
-        refreshInterval = setInterval(() => generateCode(true), 60000);
+        alert('Error generating code. Please try again.');
       }
     }
 
@@ -208,4 +210,4 @@
     }
   </script>
 </body>
-        </html>
+</html>
