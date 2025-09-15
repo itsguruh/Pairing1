@@ -135,6 +135,143 @@
     <div class="input-box">
       <input type="text" id="number" placeholder="e.g. +2547xxxxxxx">
     </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRYPTIX-MD Pairing</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e1c1a, #3b2f2f);
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Floating stars background */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: moveStar 10s linear infinite;
+    }
+    @keyframes moveStar {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+    }
+
+    .logo {
+      width: 120px;
+      border-radius: 50%;
+      margin: 20px auto;
+      display: block;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #d2b48c; /* brownish gold */
+    }
+
+    .input-box {
+      margin: 20px 0;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      border: 2px solid #d2b48c;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    /* Button style (old look restored) */
+    .btn {
+      display: block;
+      margin: 15px auto;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background: #3b2f2f;
+      border: 2px solid #d2b48c;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: #d2b48c;
+      color: black;
+    }
+
+    /* Generated code box */
+    .code-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 2px dashed #d2b48c;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* Music controls */
+    .music-controls {
+      margin-top: 20px;
+    }
+    .pause-btn {
+      background: #d2b48c;
+      border: none;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .pause-btn:hover {
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="container">
+    <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
+
+    <h1>CRYPTIX-MD Pairing</h1>
+    <p>Enter your WhatsApp number below 👇</p>
+
+    <div class="input-box">
+      <input type="text" id="number" placeholder="e.g. 2547xxxxxxx">
+    </div>
 
     <button class="btn" onclick="generateCode()">Generate Pairing Code</button>
 
@@ -176,7 +313,7 @@
       }
 
       try {
-        const response = await fetch(`/pair?number=${encodeURIComponent(number)}`);
+        const response = await fetch(`/api/pair?number=${encodeURIComponent(number)}`);
         const data = await response.json();
 
         const codeBox = document.getElementById('code-box');
@@ -198,4 +335,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
