@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 8000;
 
 // Import your bot routes
 let server = require('./qr');
-let code = require('./pair');
+let code = require('./pair'); // this is your backend pairing router
 
 require('events').EventEmitter.defaultMaxListeners = 500;
 
@@ -20,10 +20,11 @@ app.use(express.static(path.join(__dirname)));
 
 // Routes
 app.use('/server', server);
-app.use('/code', code);
+app.use('/pair', code); // pairing API (from pair.js)
 
-app.get('/pair', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pair.html'));
+// Serve frontend pages
+app.get('/pair-page', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pair.html')); // frontend page
 });
 
 app.get('/qr', (req, res) => {
