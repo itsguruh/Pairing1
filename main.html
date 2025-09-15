@@ -88,43 +88,130 @@
       margin-top: 15px;
       padding: 8px 20px;
       border-radius: 20px;
-      border: none;
-      background: #8b4513;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRYPTIX-MD</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
       color: white;
+      overflow: hidden;
+    }
+
+    /* Floating stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      animation: twinkle 3s infinite;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+    }
+
+    img.logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-top: 20px;
+      box-shadow: 0 0 20px cyan;
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 28px;
+      text-shadow: 0 0 10px cyan;
+    }
+
+    /* Old button style */
+    .btn {
+      display: block;
+      width: 250px;
+      margin: 15px auto;
+      padding: 12px;
+      border: none;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
+      color: white;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      box-shadow: 0 0 15px #00c6ff;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #00c6ff;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    /* Music controls */
+    #musicControls {
+      margin-top: 15px;
+    }
+    #pauseBtn {
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 10px crimson;
     }
   </style>
 </head>
 <body>
-  <!-- Stars -->
+  <!-- Floating stars (background) -->
   <div id="stars"></div>
 
-  <!-- Bot logo -->
-  <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo" />
-  <h1>CRYPTIX-MD PAIRING</h1>
+  <div class="container">
+    <!-- Bot Logo -->
+    <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
 
-  <!-- Input -->
-  <input type="text" id="number" placeholder="Enter your WhatsApp number"/>
+    <h1>CRYPTIX-MD</h1>
 
-  <!-- Buttons -->
-  <button class="btn" onclick="generateCode()">Generate Code</button>
-  <button class="btn" onclick="window.open('https://github.com/itsguruh/CRYPTIX-MD','_blank')">GitHub</button>
-  <button class="btn" onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">WhatsApp Channel</button>
-  <button class="btn" onclick="window.open('https://wa.me/254105521300','_blank')">Contact Owner</button>
+    <!-- Buttons -->
+    <button class="btn" onclick="window.location.href='/pair'">📲 Pair Device</button>
+    <button class="btn" onclick="window.location.href='https://github.com/itsguruh/CRYPTIX-MD'">💻 GitHub</button>
+    <button class="btn" onclick="window.location.href='https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s'">📢 WhatsApp Channel</button>
+    <button class="btn" onclick="window.location.href='tel:+254105521300'">📞 Contact Owner</button>
+    <button class="btn" onclick="window.location.href='/code'">🔑 Show Codes</button>
 
-  <!-- Generated code box -->
-  <div id="codeBox"></div>
+    <!-- Music autoplay -->
+    <div id="musicControls">
+      <audio id="bgMusic" autoplay loop>
+        <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+      </audio>
+      <button id="pauseBtn">⏸ Pause Music</button>
+    </div>
 
-  <!-- Music -->
-  <audio id="bgMusic" autoplay loop>
-    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-  </audio>
-  <button id="pauseBtn" onclick="toggleMusic()">Pause Music</button>
+    <div class="footer">© Powered by Official Guru</div>
+  </div>
 
   <script>
-    // Stars
+    // Floating stars generator
     const starsContainer = document.getElementById('stars');
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 80; i++) {
       const star = document.createElement('div');
       star.className = 'star';
       star.style.top = Math.random() * window.innerHeight + 'px';
@@ -133,36 +220,18 @@
       starsContainer.appendChild(star);
     }
 
-    // Generate Code
-    async function generateCode() {
-      const number = document.getElementById("number").value;
-      if (!number) {
-        alert("Please enter your WhatsApp number");
-        return;
-      }
-      try {
-        const response = await fetch(`/code?number=${number}`);
-        const data = await response.json();
-        document.getElementById("codeBox").style.display = "block";
-        document.getElementById("codeBox").innerText = "Your Code: " + data.code;
-      } catch (err) {
-        console.error(err);
-        alert("Error generating code");
-      }
-    }
-
-    // Music toggle
+    // Music controls
     const music = document.getElementById("bgMusic");
     const pauseBtn = document.getElementById("pauseBtn");
-    function toggleMusic() {
+    pauseBtn.addEventListener("click", () => {
       if (music.paused) {
         music.play();
-        pauseBtn.innerText = "Pause Music";
+        pauseBtn.textContent = "⏸ Pause Music";
       } else {
         music.pause();
-        pauseBtn.innerText = "Play Music";
+        pauseBtn.textContent = "▶️ Play Music";
       }
-    }
+    });
   </script>
 </body>
 </html>
