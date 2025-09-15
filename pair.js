@@ -3,7 +3,13 @@ const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+const {
+    default: makeWASocket,
+    useMultiFileAuthState,
+    delay,
+    Browsers,
+    makeCacheableSignalKeyStore
+} = require('@whiskeysockets/baileys');
 const { upload } = require('./mega');
 
 function removeFile(FilePath) {
@@ -13,19 +19,18 @@ function removeFile(FilePath) {
 }
 
 router.get('/', async (req, res) => {
+    const id = makeid();
     let num = req.query.number;
 
-    // ✅ Prevent empty number error
-    if (!num) {
-        return res.json({ code: "❗ Please enter a valid phone number!" });
+    // ✅ Check if number was provided
+    if (!num || num.trim() === "") {
+        return res.status(400).json({ code: "❗ Error: No number provided!" });
     }
 
-    const id = makeid();
-
     async function CRYPTIX_PAIR_CODE() {
-        try {
-            const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
 
+        try {
             let sock = makeWASocket({
                 auth: {
                     creds: state.creds,
@@ -38,29 +43,33 @@ router.get('/', async (req, res) => {
                 generateHighQualityLinkPreview: true,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
                 syncFullHistory: false,
-                browser: Browsers.macOS("Safari")
+                browser: Browsers.macOS("Safari"),
             });
 
-            // ✅ Request pairing code
             if (!sock.authState.creds.registered) {
                 await delay(1500);
-                num = num.replace(/[^0-9]/g, ''); // clean number
+                num = num.replace(/[^0-9]/g, '');
+
                 try {
                     const code = await sock.requestPairingCode(num);
-                    return res.json({ code: code });
+                    if (!res.headersSent) {
+                        return res.json({ code }); // ✅ Always JSON
+                    }
                 } catch (err) {
-                    console.error("Pairing Error:", err);
-                    return res.json({ code: "❗ Failed to generate code. Check number format." });
+                    console.error("❌ Failed to get pairing code:", err);
+                    if (!res.headersSent) {
+                        return res.status(500).json({ code: "❗ Error: Failed to request code" });
+                    }
                 }
             }
 
             sock.ev.on('creds.update', saveCreds);
 
             sock.ev.on("connection.update", async (s) => {
-                const { connection, lastDisconnect } = s;
+                const { connection } = s;
 
                 if (connection === "open") {
-                    console.log(`✅ Connected: ${sock.user.id}`);
+                    console.log(`👤 ${sock.user.id} Connected ✅ Pairing success!`);
 
                     let rf = __dirname + `/temp/${id}/creds.json`;
 
@@ -69,38 +78,46 @@ router.get('/', async (req, res) => {
                         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                         let randomText = prefix;
                         for (let i = prefix.length; i < 22; i++) {
-                            randomText += characters.charAt(Math.floor(Math.random() * characters.length));
+                            const randomIndex = Math.floor(Math.random() * characters.length);
+                            randomText += characters.charAt(randomIndex);
                         }
                         return randomText;
                     }
 
+                    const randomText = generateRandomText();
+
                     try {
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
-                        const sessionID = "CRYPTIX-MD~" + mega_url.replace('https://mega.nz/file/', '');
+                        const string_session = mega_url.replace('https://mega.nz/file/', '');
+                        let md = "CRYPTIX-MD~" + string_session;
 
-                        // 📩 Send session to WhatsApp
-                        await sock.sendMessage(sock.user.id, { text: sessionID });
+                        // 🎉 Main session message
+                        let desc = `*✨ CRYPTIX-MD Pairing Successful ✅*
 
-                        // 📸 Send bot logo + description
-                        const desc = `*🤖 Hello there ! 💕*  
+> Your **Session ID** 🌀:  
+\`\`\`${md}\`\`\`
 
-Your session ID 🌀:  
-> ${sessionID}  
+⚠️ *Keep it private!*  
+Sharing your session may give others full access to your WhatsApp.  
 
-⚠️ *DO NOT SHARE THIS SESSION ID*  
-✅ Thanks for using *CRYPTIX-MD* ❤️  
+📢 *Stay Connected:*  
+- 🔗 WhatsApp Channel:  
+  https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s  
+- 💻 GitHub Repo:  
+  https://github.com/itsguruh/CRYPTIX-MD  
 
-📢 Join Channel:  
-https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s  
+👨‍💻 *Powered by Official Guru*  
+💡 Tip: Always back up your session ID for safety.  
 
-© Powered by Official Guru 🔥`;
+*Thanks for trusting CRYPTIX-MD ❤️*`;
 
+                        // Send welcome + logo
                         await sock.sendMessage(sock.user.id, {
                             image: { url: 'https://files.catbox.moe/f6q239.jpg' },
                             caption: desc,
                         });
 
-                        // 🎵 Send music as voice note
+                        // 🎵 Send music (voice note style)
                         await sock.sendMessage(sock.user.id, {
                             audio: { url: 'https://files.catbox.moe/0joaof.mp3' },
                             mimetype: 'audio/mp4',
@@ -108,21 +125,21 @@ https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s
                         });
 
                     } catch (e) {
-                        console.error("Session Error:", e);
-                        await sock.sendMessage(sock.user.id, { text: "❗ Error while saving session. Try again." });
+                        console.error("Error while sending session:", e);
+                        let errorMsg = `*❗ Error:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *GitHub:* https://github.com/itsguruh/CRYPTIX-MD`;
+                        await sock.sendMessage(sock.user.id, { text: errorMsg });
                     }
-                } else if (connection === "close" && lastDisconnect?.error?.output?.statusCode != 401) {
-                    console.log("⚠️ Restarting service...");
+
                     await delay(2000);
-                    CRYPTIX_PAIR_CODE();
+                    await sock.ws.close();
+                    removeFile('./temp/' + id);
                 }
             });
-
         } catch (err) {
-            console.error("Fatal Error:", err);
+            console.error("Service crashed:", err);
             removeFile('./temp/' + id);
             if (!res.headersSent) {
-                return res.json({ code: "❗ Service Unavailable. Please retry." });
+                return res.status(500).json({ code: "❗ Error: Service crashed unexpectedly" });
             }
         }
     }
