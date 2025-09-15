@@ -24,19 +24,31 @@
       z-index: -1;
     }
 
+    .logo {
+      margin-top: 25px;
+    }
+
+    .logo img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 25px brown;
+    }
+
     h1 {
-      margin-top: 20px;
+      margin: 15px 0;
       font-size: 2rem;
       background: linear-gradient(90deg, brown, white);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    /* --- OLD BUTTON STYLE (restored) --- */
+    /* --- OLD BUTTON STYLE RESTORED --- */
     .btn {
       position: relative;
       padding: 0.6em 0.8em;
-      margin: 10px;
+      margin: 12px;
       border-radius: 8px;
       border: none;
       font-size: 0.9rem;
@@ -83,14 +95,14 @@
       color: black;
     }
 
-    /* QR Code box */
+    /* QR Container */
     #qrBox {
       margin: 20px auto;
       padding: 15px;
       border: 2px dashed white;
       border-radius: 8px;
       width: 80%;
-      max-width: 300px;
+      max-width: 400px;
       background: rgba(255, 255, 255, 0.05);
     }
 
@@ -109,15 +121,20 @@
 <body>
   <canvas id="stars"></canvas>
 
+  <!-- Bot Logo -->
+  <div class="logo">
+    <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
+  </div>
+
   <h1>Scan QR Code</h1>
 
   <div id="qrBox">
-    <p>⏳ Loading QR Code...</p>
-    <img id="qrImage" src="" alt="QR Code" style="width:100%;display:none;">
+    <p>📸 Your QR will appear here...</p>
   </div>
 
   <button onclick="window.location.href='/'" class="btn">⬅ Back</button>
 
+  <!-- Music Control -->
   <button id="musicControl">⏸ Pause Music</button>
   <audio id="bgMusic" autoplay loop>
     <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
@@ -154,24 +171,6 @@
     }
     drawStars();
 
-    // Load QR
-    async function loadQR() {
-      try {
-        const res = await fetch("/server");
-        const data = await res.json();
-        if (data.qr) {
-          document.getElementById("qrImage").src = data.qr;
-          document.getElementById("qrImage").style.display = "block";
-          document.querySelector("#qrBox p").style.display = "none";
-        } else {
-          document.querySelector("#qrBox p").innerText = "❌ Failed to load QR.";
-        }
-      } catch {
-        document.querySelector("#qrBox p").innerText = "⚠ Error loading QR.";
-      }
-    }
-    loadQR();
-
     // Music control
     const bgMusic = document.getElementById("bgMusic");
     const musicControl = document.getElementById("musicControl");
@@ -186,4 +185,4 @@
     });
   </script>
 </body>
-</html>
+  </html>
