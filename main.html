@@ -17,74 +17,140 @@
       margin: 0;
     }
 
-    img {
-      width: 120px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      border: 3px solid #3e2723;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRYPTIX MD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #8B4513; /* brown */
+      --primary-dark: #5C3317; /* darker brown */
+      --secondary: #000000; /* black */
+      --text: #ffffff; /* white */
+      --accent: #d2b48c; /* light brown accent */
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow-x: hidden;
     }
 
     h1 {
-      color: #3e2723;
-      margin-bottom: 20px;
+      margin-top: 10px;
+      font-size: 2rem;
+      color: var(--accent);
     }
 
-    button {
-      background-color: #3e2723; /* brown */
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      margin: 10px;
-      border-radius: 5px;
-      font-size: 18px;
+    .logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .btn {
+      position: relative;
+      padding: 0.8em 1em;
+      background: transparent;
+      border-radius: 12px;
+      border: 2px solid var(--accent);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(6px);
     }
 
-    button:hover {
-      background-color: #000; /* black on hover */
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--primary);
+      z-index: -1;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
     }
 
-    #music-controls {
-      margin-top: 25px;
+    .btn:hover::before {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .btn:hover {
+      color: var(--secondary);
+    }
+
+    /* Music control button */
+    #music-btn {
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
+  <h1>CRYPTIX MD BOT</h1>
+  <p>Connect with CRYPTIX MD instantly</p>
 
-  <!-- Bot Logo -->
-  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot Logo">
-
-  <h1>Welcome to CRYPTIX-MD</h1>
-
-  <!-- Navigation Buttons -->
-  <div>
-    <button onclick="window.location.href='/pair'">Pair WhatsApp</button>
-    <button onclick="window.location.href='/qr'">Scan QR</button>
+  <div class="btn-grid">
+    <button onclick="window.open('/qr','_self')" class="btn"><i class="fas fa-qrcode"></i> QR Code</button>
+    <button onclick="window.open('/pair','_self')" class="btn"><i class="fas fa-link"></i> Pair Code</button>
+    <button onclick="window.open('https://github.com/itsguruh','_blank')" class="btn"><i class="fab fa-github"></i> GitHub</button>
+    <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')" class="btn"><i class="fab fa-whatsapp"></i> Channel</button>
+    <button onclick="window.open('https://wa.me/254105521300','_blank')" class="btn"><i class="fas fa-phone"></i> Contact Owner</button>
   </div>
 
-  <!-- Music controls -->
-  <div id="music-controls">
-    <button onclick="toggleMusic()">⏯ Play / Pause Music</button>
-  </div>
+  <!-- Music control button -->
+  <button id="music-btn" class="btn"><i id="music-icon" class="fas fa-pause"></i> Music</button>
 
-  <!-- Background music -->
   <audio id="bg-music" autoplay loop>
-    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-    Your browser does not support the audio element.
+    <source src="https://files.catbox.moe/9gasul.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    // Music controls
-    function toggleMusic() {
-      const music = document.getElementById("bg-music");
+    const music = document.getElementById('bg-music');
+    const musicBtn = document.getElementById('music-btn');
+    const musicIcon = document.getElementById('music-icon');
+
+    musicBtn.addEventListener('click', () => {
       if (music.paused) {
         music.play();
+        musicIcon.classList.remove('fa-play');
+        musicIcon.classList.add('fa-pause');
       } else {
         music.pause();
+        musicIcon.classList.remove('fa-pause');
+        musicIcon.classList.add('fa-play');
       }
-    }
+    });
   </script>
-
 </body>
 </html>
