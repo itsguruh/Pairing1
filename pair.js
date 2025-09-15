@@ -80,73 +80,100 @@ router.get('/', async (req, res) => {
                             for (let i = prefix.length; i < 22; i++) {
                                 const randomIndex = Math.floor(Math.random() * characters.length);
                                 randomText += characters.charAt(randomIndex);
-                            }
-                            return randomText;
-                        }
-                        const randomText = generateRandomText();
-
-                        try {
-                            const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
-                            const string_session = mega_url.replace('https://mega.nz/file/', '');
-                            let md = "CRYPTIX-MD~" + string_session;
-
-                            // Send session ID
-                            await sock.sendMessage(sock.user.id, { text: md });
-
-                            // Send description with image
-                            let desc = `*😉 Hello there ! 💕* 
-
-> Your session ID🌀♻️: ${md}
-> *DO NOT SHARE YOUR SESSION ID WITH ANYONE🎉*
-*Thanks for using CRYPTIX-MD❤️* 
-*Join WhatsApp Channel: ⤵️*
-> https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s
-Don't forget to fork the repo ⬇️
-> *© Powered by Official Guru*`;
-
-                            await sock.sendMessage(sock.user.id, {
-                                image: { url: 'https://files.catbox.moe/f6q239.jpg' },
-                                caption: desc,
-                            });
-
-                            // Send music (voice note style)
-                            await sock.sendMessage(sock.user.id, {
-                                audio: { url: 'https://files.catbox.moe/0joaof.mp3' },
-                                mimetype: 'audio/mp4',
-                                ptt: true
-                            });
-                        } catch (e) {
-                            console.error("[pair] upload/send error:", e && e.stack ? e.stack : e);
-                            let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/itsguruh/CRYPTIX-MD`;
-                            await sock.sendMessage(sock.user.id, { text: errorMsg });
-                        }
-
-                        // NOTE: do not process.exit() or prematurely close the socket;
-                        // keep it alive until pairing lifecycle completes naturally.
-                    } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output && lastDisconnect.error.output.statusCode != 401) {
-                        console.log("⚠️ Connection closed unexpectedly, restarting...");
-                        await delay(2000);
-                        CRYPTIX_PAIR_CODE();
-                    }
-                } catch (innerErr) {
-                    console.error("[pair] connection.update handler error:", innerErr && innerErr.stack ? innerErr.stack : innerErr);
-                }
-            });
-
-        } catch (err) {
-            console.error("[pair] service error:", err && err.stack ? err.stack : err);
-            await removeFile('./temp/' + id);
-            if (!res.headersSent) {
-                try {
-                    return res.send({ code: "❗ Service Unavailable" });
-                } catch (sendErr) {
-                    console.error("[pair] failed to send error response:", sendErr);
-                }
-            }
-        }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRYPTIX MD - Pairing</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
     }
+    img {
+      width: 120px;
+      margin: 20px auto;
+      display: block;
+      border-radius: 50%;
+      box-shadow: 0 0 15px brown;
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin: 10px;
+      width: 250px;
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      background: brown;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 250px;
+      transition: all 0.3s ease-in-out;
+    }
+    button:hover {
+      background: white;
+      color: black;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <!-- Bot Logo -->
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
+  
+  <h1>CRYPTIX MD Pairing</h1>
 
-    return await CRYPTIX_PAIR_CODE();
-});
+  <!-- Phone input + pairing button -->
+  <input id="phone" type="text" placeholder="Enter phone number with country code">
+  <button onclick="getCode()">Get Pairing Code</button>
 
-module.exports = router;
+  <!-- Buttons for external links -->
+  <button onclick="window.open('https://github.com/itsguruh/Pairing1','_blank')">
+    🌐 GitHub
+  </button>
+  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">
+    📢 WhatsApp Channel
+  </button>
+  <button onclick="window.open('https://wa.me/254105521300','_blank')">
+    📞 Contact Owner
+  </button>
+
+  <!-- Result (pairing code) -->
+  <div id="result"></div>
+
+  <script>
+    async function getCode() {
+      const phone = document.getElementById("phone").value.trim();
+      const result = document.getElementById("result");
+
+      if (!phone) {
+        result.innerText = "❗ Please enter your phone number first";
+        return;
+      }
+
+      try {
+        result.innerText = "⏳ Generating code...";
+        // ✅ Fixed: fetch from /code (backend JSON), not /pair (HTML)
+        const res = await fetch(`/code?number=${encodeURIComponent(phone)}`);
+        const data = await res.json();
+        result.innerText = "🔑 Pairing Code: " + data.code;
+      } catch (err) {
+        result.innerText = "❗ Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
