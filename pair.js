@@ -30,33 +30,86 @@ var randomItem = selectRandomItem(items);
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
+const { makeid } = require('./gen-id');
+const express = require('express');
+const fs = require('fs');
+let router = express.Router();
+const pino = require("pino");
+const {
+    default: makeWASocket,
+    useMultiFileAuthState,
+    delay,
+    Browsers,
+    makeCacheableSignalKeyStore
+} = require('@whiskeysockets/baileys');
+
+const { upload } = require('./mega');
+
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
+}
+
+// Helper: normalize phone numbers
+function normalizeNumber(num) {
+    num = num.trim();
+
+    // If starts with "+", remove it
+    if (num.startsWith("+")) {
+        num = num.slice(1);
+    }
+
+    // If starts with "0", convert to international (example: Kenya = 254)
+    if (num.startsWith("0")) {
+        num = "254" + num.slice(1);
+    }
+
+    // Remove all non-digits
+    num = num.replace(/[^0-9]/g, '');
+    return num;
+}
+
+router.get('/', async (req, res) => {
+    const id = makeid();
+    let num = req.query.number;
+
+    if (!num) {
+        return res.status(400).send({ error: "❌ Missing number parameter" });
+    }
+
+    num = normalizeNumber(num);
+
+    async function GIFTED_MD_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        try {
+            let sock = makeWASocket({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }))
                 },
                 printQRInTerminal: false,
                 generateHighQualityLinkPreview: true,
-                logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+                logger: pino({ level: "fatal" }),
                 syncFullHistory: false,
-                browser: Browsers.macOS(randomItem)
+                browser: Browsers.macOS("Safari")
             });
+
             if (!sock.authState.creds.registered) {
                 await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
                 const code = await sock.requestPairingCode(num);
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
             }
+
             sock.ev.on('creds.update', saveCreds);
             sock.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
 
-    const {
-                    connection,
-                    lastDisconnect
-                } = s;
-                
                 if (connection == "open") {
                     await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     let rf = __dirname + `/temp/${id}/creds.json`;
+
                     function generateRandomText() {
                         const prefix = "3EB";
                         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -67,18 +120,12 @@ var randomItem = selectRandomItem(items);
                         }
                         return randomText;
                     }
-                    const randomText = generateRandomText();
-                    try {
 
-                        const { upload } = require('./mega');
+                    try {
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "CRYPTIX-MD~" + string_session;
-                        
-                        // Send session ID first
-                        let codeMsg = await sock.sendMessage(sock.user.id, { text: md });
-                        
-                        // Create newsletter message with image and text
+
                         let desc = `*😉 Hello there ! 💕* 
 
 > Your session ID🌀♻️: ${md}
@@ -87,38 +134,19 @@ var randomItem = selectRandomItem(items);
 *Join WhatsApp Channel: ⤵️*
 > https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s
 Don't forget to fork the repo ⬇️
-> *© Powered by Official Guru*`; 
-                        
-                        // Send image with caption
+> *© Powered by Official Guru*`;
+
+                        await sock.sendMessage(sock.user.id, { text: md });
                         await sock.sendMessage(sock.user.id, {
                             image: { url: 'https://files.catbox.moe/f6q239.jpg' },
-                            caption: desc,
-                            contextInfo: {
-                                forwardingScore: 1,
-                                isForwarded: true,
-                                forwardedNewsletterMessageInfo: {
-                                    newsletterJid: '120363405400048680@newsletter',
-                                    newsletterName: 'CRYPTIX-MD',
-                                    serverMessageId: -1
-                                }
-                            }
+                            caption: desc
                         });
                     } catch (e) {
                         console.error("Error:", e);
                         let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/itsguruh/CRYPTIX-MD`;
-                        await sock.sendMessage(sock.user.id, {
-                            text: errorMsg,
-                            contextInfo: {
-                                forwardingScore: 1,
-                                isForwarded: true,
-                                forwardedNewsletterMessageInfo: {
-                                    newsletterJid: '1120363405400048680@newsletter',
-                                    newsletterName: 'CRYPTIX-MD',
-                                    serverMessageId: -1
-                                }
-                            }
-                        });
+                        await sock.sendMessage(sock.user.id, { text: errorMsg });
                     }
+
                     await delay(10);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
@@ -138,6 +166,10 @@ Don't forget to fork the repo ⬇️
             }
         }
     }
-   return await GIFTED_MD_PAIR_CODE();
+
+    return await GIFTED_MD_PAIR_CODE();
+});
+
+module.exports = router;IR_CODE();
 });
 module.exports = router;
