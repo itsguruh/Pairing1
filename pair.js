@@ -1,94 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRYPTIX-MD Pairing</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #3e2723, #000, #fff);
-      color: #fff;
-      text-align: center;
-      padding: 40px;
-    }
-    h1 {
-      color: #ffcc80;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #4e342e;
-      color: white;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #6d4c41;
-    }
-    #music-controls {
-      margin-top: 30px;
-    }
-    .pair-box {
-      margin-top: 30px;
-      background: rgba(0,0,0,0.5);
-      padding: 20px;
-      border-radius: 12px;
-      display: inline-block;
-    }
-  </style>
-</head>
-<body>
-  <h1>CRYPTIX-MD Pairing Code</h1>
-  <p>Enter your number with country code to generate a pairing code:</p>
+const { makeid } = require('./gen-id');
+const express = require('express');
+const fs = require('fs');
+let router = express.Router();
+const pino = require("pino");
+const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+const { upload } = require('./mega');
 
-  <div class="pair-box">
-    <form id="pairForm">
-      <input type="text" id="number" placeholder="2547xxxxxxxx" required>
-      <button type="submit">Get Pairing Code</button>
-    </form>
-    <p id="result"></p>
-  </div>
+// Helper: remove temp files
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
+}
 
-  <!-- 🎵 Background Music -->
-  <div id="music-controls">
-    <audio id="bg-music" loop>
-      <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-    </audio>
-    <button onclick="toggleMusic()">▶ Play / ⏸ Pause Music</button>
-  </div>
+router.get('/', async (req, res) => {
+    const id = makeid();
+    let num = req.query.number;
 
-  <script>
-    // Handle pairing request
-    document.getElementById('pairForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const number = document.getElementById('number').value;
-      document.getElementById('result').textContent = "⏳ Generating code...";
-      try {
-        const res = await fetch(`/pair?number=${number}`);
-        const data = await res.json();
-        if (data.code) {
-          document.getElementById('result').textContent = "✅ Pairing Code: " + data.code;
-        } else if (data.error) {
-          document.getElementById('result').textContent = "❌ " + data.error;
+    async function CRYPTIX_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        try {
+            var items = ["Safari"];
+            function selectRandomItem(array) {
+                var randomIndex = Math.floor(Math.random() * array.length);
+                return array[randomIndex];
+            }
+            var randomItem = selectRandomItem(items);
+
+            let sock = makeWASocket({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
+                },
+                printQRInTerminal: false,
+                generateHighQualityLinkPreview: true,
+                logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+                syncFullHistory: false,
+                browser: Browsers.macOS(randomItem)
+            });
+
+            if (!sock.authState.creds.registered) {
+                await delay(1500);
+                num = num.replace(/[^0-9]/g, '');
+                const code = await sock.requestPairingCode(num);
+                if (!res.headersSent) {
+                    await res.send({ code }); // ✅ Responds to frontend
+                }
+            }
+
+            sock.ev.on('creds.update', saveCreds);
+            sock.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
+
+                if (connection == "open") {
+                    await delay(5000);
+                    let rf = __dirname + `/temp/${id}/creds.json`;
+
+                    function generateRandomText() {
+                        const prefix = "3EB";
+                        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                        let randomText = prefix;
+                        for (let i = prefix.length; i < 22; i++) {
+                            const randomIndex = Math.floor(Math.random() * characters.length);
+                            randomText += characters.charAt(randomIndex);
+                        }
+                        return randomText;
+                    }
+                    const randomText = generateRandomText();
+                    try {
+                        const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
+                        const string_session = mega_url.replace('https://mega.nz/file/', '');
+                        let md = "CRYPTIX-MD~" + string_session;
+
+                        // Send session ID
+                        await sock.sendMessage(sock.user.id, { text: md });
+
+                        // Send description with image
+                        let desc = `*😉 Hello there ! 💕* 
+
+> Your session ID🌀♻️: ${md}
+> *DO NOT SHARE YOUR SESSION ID WITH ANYONE🎉*
+*Thanks for using CRYPTIX-MD❤️* 
+*Join WhatsApp Channel: ⤵️*
+> https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s
+Don't forget to fork the repo ⬇️
+> *© Powered by Official Guru*`;
+
+                        await sock.sendMessage(sock.user.id, {
+                            image: { url: 'https://files.catbox.moe/f6q239.jpg' },
+                            caption: desc,
+                        });
+
+                        // 🎵 Send music (same as main.html player)
+                        await sock.sendMessage(sock.user.id, {
+                            audio: { url: 'https://files.catbox.moe/0joaof.mp3' },
+                            mimetype: 'audio/mp4',
+                            ptt: true
+                        });
+
+                    } catch (e) {
+                        console.error("Error:", e);
+                        let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/itsguruh/CRYPTIX-MD`;
+                        await sock.sendMessage(sock.user.id, { text: errorMsg });
+                    }
+
+                    await delay(10);
+                    await sock.ws.close();
+                    await removeFile('./temp/' + id);
+                    console.log(`👤 ${sock.user.id} Connected ✅ Restarting process...`);
+                    await delay(10);
+                    process.exit();
+                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                    await delay(10);
+                    CRYPTIX_PAIR_CODE();
+                }
+            });
+        } catch (err) {
+            console.log("service restarted", err);
+            await removeFile('./temp/' + id);
+            if (!res.headersSent) {
+                await res.send({ code: "❗ Service Unavailable" });
+            }
         }
-      } catch (err) {
-        document.getElementById('result').textContent = "⚠️ Error: " + err;
-      }
-    });
-
-    // 🎵 Music toggle
-    const music = document.getElementById("bg-music");
-    function toggleMusic() {
-      if (music.paused) {
-        music.play();
-      } else {
-        music.pause();
-      }
     }
-  </script>
-</body>
-</html>
+    return await CRYPTIX_PAIR_CODE();
+});
+
+module.exports = router;
