@@ -3,171 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRYPTIX-MD | Pair Code</title>
+  <title>CRYPTIX-MD Pairing</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      overflow: hidden;
-      background: black;
+      background: linear-gradient(135deg, #1e1c1a, #3b2f2f);
       color: white;
       text-align: center;
+      overflow: hidden;
     }
 
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* Floating stars background */
+    .stars {
+      position: absolute;
       width: 100%;
       height: 100%;
+      background: transparent;
       z-index: -1;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: moveStar 10s linear infinite;
+    }
+    @keyframes moveStar {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+    }
+
+    .logo {
+      width: 120px;
+      border-radius: 50%;
+      margin: 20px auto;
+      display: block;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     }
 
     h1 {
-      margin-top: 20px;
-      color: white;
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #d2b48c; /* brownish gold */
     }
 
+    .input-box {
+      margin: 20px 0;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      border: 2px solid #d2b48c;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    /* Button style (old look restored) */
     .btn {
-      display: inline-block;
+      display: block;
+      margin: 15px auto;
       padding: 12px 25px;
-      margin: 10px;
       font-size: 16px;
       font-weight: bold;
-      border: 2px solid white;
-      border-radius: 8px;
-      background: brown;
       color: white;
+      background: #3b2f2f;
+      border: 2px solid #d2b48c;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease-in-out;
+      transition: 0.3s;
       text-decoration: none;
     }
-
     .btn:hover {
-      background: white;
+      background: #d2b48c;
       color: black;
-      border-color: brown;
     }
 
-    #codeBox {
-      margin: 20px auto;
+    /* Generated code box */
+    .code-box {
+      margin-top: 20px;
       padding: 15px;
-      border: 2px dashed white;
+      border: 2px dashed #d2b48c;
       border-radius: 8px;
-      width: 80%;
-      max-width: 500px;
-      background: rgba(255, 255, 255, 0.1);
-      color: brown;
+      background: rgba(0, 0, 0, 0.5);
+      width: 300px;
+      margin-left: auto;
+      margin-right: auto;
       font-size: 18px;
       font-weight: bold;
-      display: none;
     }
 
-    #musicControl {
+    /* Music controls */
+    .music-controls {
       margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 14px;
-      border: 2px solid white;
-      border-radius: 8px;
-      background: black;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
     }
-
-    #musicControl:hover {
-      background: brown;
-      color: white;
+    .pause-btn {
+      background: #d2b48c;
+      border: none;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .pause-btn:hover {
+      background: white;
     }
   </style>
 </head>
 <body>
-  <canvas id="stars"></canvas>
+  <div class="stars" id="stars"></div>
+  <div class="container">
+    <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
 
-  <h1>Generate Your Pair Code</h1>
+    <h1>CRYPTIX-MD Pairing</h1>
+    <p>Enter your WhatsApp number below 👇</p>
 
-  <div>
-    <input type="text" id="number" placeholder="Enter your WhatsApp number" style="padding:10px;width:70%;max-width:300px;border-radius:5px;border:2px solid brown;">
-    <button class="btn" onclick="generateCode()">Generate Code</button>
-    <a href="/" class="btn">⬅ Back</a>
+    <div class="input-box">
+      <input type="text" id="number" placeholder="e.g. +2547xxxxxxx">
+    </div>
+
+    <button class="btn" onclick="generateCode()">Generate Pairing Code</button>
+
+    <!-- Code will show automatically here -->
+    <div id="code-box" class="code-box" style="display: none;"></div>
+
+    <!-- Buttons -->
+    <a href="https://github.com/itsguruh/Pairing1" target="_blank" class="btn">🌐 GitHub</a>
+    <a href="https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s" target="_blank" class="btn">📢 WhatsApp Channel</a>
+    <a href="https://wa.me/254105521300" target="_blank" class="btn">📞 Contact Owner</a>
+
+    <!-- Music Controls -->
+    <div class="music-controls">
+      <audio id="bg-music" autoplay loop>
+        <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+      </audio>
+      <button class="pause-btn" onclick="toggleMusic()">⏯ Pause/Play Music</button>
+    </div>
   </div>
 
-  <div id="codeBox"></div>
-
-  <button id="musicControl">⏸ Pause Music</button>
-  <audio id="bgMusic" autoplay loop>
-    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-  </audio>
-
   <script>
-    // Floating stars
-    const canvas = document.getElementById("stars");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let stars = [];
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-        color: ["white", "brown", "gray"][Math.floor(Math.random() * 3)]
-      });
+    // Floating stars generator
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 50; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.animationDuration = (5 + Math.random() * 10) + 's';
+      starsContainer.appendChild(star);
     }
 
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = star.color;
-        ctx.fill();
-
-        star.y += 0.2;
-        if (star.y > canvas.height) star.y = 0;
-      });
-      requestAnimationFrame(drawStars);
-    }
-    drawStars();
-
-    // Fetch pairing code automatically
+    // Generate code function
     async function generateCode() {
-      const number = document.getElementById("number").value;
+      const number = document.getElementById('number').value;
       if (!number) {
-        alert("Please enter your WhatsApp number.");
+        alert('Please enter a number!');
         return;
       }
 
-      document.getElementById("codeBox").style.display = "block";
-      document.getElementById("codeBox").innerText = "⏳ Generating code...";
-
       try {
-        const res = await fetch(`/code?number=${encodeURIComponent(number)}`);
-        const data = await res.json();
-        if (data.code) {
-          document.getElementById("codeBox").innerText = "✅ Your Pairing Code: " + data.code;
-        } else {
-          document.getElementById("codeBox").innerText = "❌ Failed to generate code.";
-        }
+        const response = await fetch(`/pair?number=${encodeURIComponent(number)}`);
+        const data = await response.json();
+
+        const codeBox = document.getElementById('code-box');
+        codeBox.style.display = 'block';
+        codeBox.innerText = "🔑 Pairing Code: " + data.code;
       } catch (err) {
-        document.getElementById("codeBox").innerText = "⚠ Error: Service unavailable.";
+        alert('Error generating code. Please try again.');
       }
     }
 
-    // Music Control
-    const bgMusic = document.getElementById("bgMusic");
-    const musicControl = document.getElementById("musicControl");
-    musicControl.addEventListener("click", () => {
-      if (bgMusic.paused) {
-        bgMusic.play();
-        musicControl.textContent = "⏸ Pause Music";
+    // Music toggle
+    const music = document.getElementById('bg-music');
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
       } else {
-        bgMusic.pause();
-        musicControl.textContent = "▶ Play Music";
+        music.pause();
       }
-    });
+    }
   </script>
 </body>
 </html>
