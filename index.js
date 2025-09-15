@@ -1,45 +1,45 @@
 const express = require('express');
-const bodyParser = require("body-parser");
-const path = require("path");
-
 const app = express();
+const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 8000;
+
+__path = process.cwd();
+
+require('events').EventEmitter.defaultMaxListeners = 500;
+
+// Routers
+let server = require('./qr');
+let code = require('./pair');
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files (HTML, JS, CSS)
-app.use(express.static(path.join(__dirname)));
-
-// Routes
-let server = require('./qr');
-let code = require('./pair');
-require('events').EventEmitter.defaultMaxListeners = 500;
-
+// ✅ Backend API routes
 app.use('/server', server);
 app.use('/code', code);
+app.use('/api/pair', code);   // pairing backend (JSON)
 
-app.get('/pair', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pair.html'));
+// ✅ Frontend pages
+app.use('/pair', (req, res) => {
+  res.sendFile(__path + '/pair.html'); // frontend page with colors + music
 });
 
-app.get('/qr', (req, res) => {
-  res.sendFile(path.join(__dirname, 'qr.html'));
+app.use('/qr', (req, res) => {
+  res.sendFile(__path + '/qr.html');
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'main.html'));
-});
-
-// Health check
-app.get('/health', (req, res) => {
-  res.send("✅ Cryptix MD Pairing Server is alive");
+app.use('/', (req, res) => {
+  res.sendFile(__path + '/main.html');
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`
+Don't Forget To Give Star ⭐ CRYPTIX MD
+
+✅ Server running on http://localhost:${PORT}
+  `);
 });
 
 module.exports = app;
