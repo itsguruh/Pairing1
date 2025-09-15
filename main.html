@@ -1,120 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRYPTIX-MD Pairing</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #000000, #2e2b28);
+      background: linear-gradient(135deg, #1e1c1a, #3b2f2f);
       color: white;
-      overflow: hidden;
       text-align: center;
+      overflow: hidden;
     }
 
-    /* Floating stars */
+    /* Floating stars background */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: -1;
+      overflow: hidden;
+    }
     .star {
       position: absolute;
       width: 2px;
       height: 2px;
       background: white;
-      animation: twinkle 5s infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-
-    img.logo {
-      margin-top: 20px;
-      width: 120px;
       border-radius: 50%;
-      box-shadow: 0 0 20px #fff;
+      animation: moveStar 10s linear infinite;
     }
-
-    h1 {
-      margin: 10px 0;
-      font-size: 28px;
-      color: #d2b48c;
-    }
-
-    input {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      width: 220px;
-      font-size: 16px;
-      margin: 10px 0;
-    }
-
-    .btn {
-      display: block;
-      width: 240px;
-      margin: 12px auto;
-      padding: 12px;
-      border: none;
-      border-radius: 25px;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-      background: linear-gradient(45deg, #000, #8b4513);
-      box-shadow: 0 0 15px #8b4513;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-    }
-
-    #codeBox {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #111;
-      color: #fff;
-      display: none;
-      font-size: 18px;
-      width: 260px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 0 12px #8b4513;
-    }
-
-    /* Music button */
-    #pauseBtn {
-      margin-top: 15px;
-      padding: 8px 20px;
-      border-radius: 20px;
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>CRYPTIX-MD</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", sans-serif;
-      text-align: center;
-      background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
-      color: white;
-      overflow: hidden;
-    }
-
-    /* Floating stars */
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: white;
-      animation: twinkle 3s infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
+    @keyframes moveStar {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(100vh); opacity: 0; }
     }
 
     .container {
@@ -123,115 +43,167 @@
       padding: 20px;
     }
 
-    img.logo {
+    .logo {
       width: 120px;
-      height: 120px;
       border-radius: 50%;
-      margin-top: 20px;
-      box-shadow: 0 0 20px cyan;
+      margin: 20px auto;
+      display: block;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     }
 
     h1 {
-      margin-top: 10px;
       font-size: 28px;
-      text-shadow: 0 0 10px cyan;
+      margin-bottom: 10px;
+      color: #d2b48c; /* brownish gold */
     }
 
-    /* Old button style */
+    .input-box {
+      margin: 20px 0;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      border: 2px solid #d2b48c;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    /* Button style (old look restored) */
     .btn {
       display: block;
-      width: 250px;
       margin: 15px auto;
-      padding: 12px;
-      border: none;
-      border-radius: 30px;
-      font-size: 18px;
+      padding: 12px 25px;
+      font-size: 16px;
       font-weight: bold;
-      cursor: pointer;
       color: white;
-      background: linear-gradient(45deg, #00c6ff, #0072ff);
-      box-shadow: 0 0 15px #00c6ff;
-      transition: transform 0.2s, box-shadow 0.3s;
+      background: #3b2f2f;
+      border: 2px solid #d2b48c;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
     }
     .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px #00c6ff;
+      background: #d2b48c;
+      color: black;
     }
 
-    .footer {
-      margin-top: 25px;
-      font-size: 14px;
-      opacity: 0.7;
+    /* Generated code box */
+    .code-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 2px dashed #d2b48c;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 18px;
+      font-weight: bold;
     }
 
     /* Music controls */
-    #musicControls {
-      margin-top: 15px;
+    .music-controls {
+      margin-top: 20px;
     }
-    #pauseBtn {
-      background: crimson;
-      color: white;
+    .pause-btn {
+      background: #d2b48c;
       border: none;
-      padding: 10px 18px;
-      border-radius: 20px;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
-      box-shadow: 0 0 10px crimson;
+      transition: 0.3s;
+    }
+    .pause-btn:hover {
+      background: white;
     }
   </style>
 </head>
 <body>
-  <!-- Floating stars (background) -->
-  <div id="stars"></div>
-
+  <div class="stars" id="stars"></div>
   <div class="container">
-    <!-- Bot Logo -->
     <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
 
-    <h1>CRYPTIX-MD</h1>
+    <h1>CRYPTIX-MD Pairing</h1>
+    <p>Enter your WhatsApp number below 👇</p>
 
-    <!-- Buttons -->
-    <button class="btn" onclick="window.location.href='/pair'">📲 Pair Device</button>
-    <button class="btn" onclick="window.location.href='https://github.com/itsguruh/CRYPTIX-MD'">💻 GitHub</button>
-    <button class="btn" onclick="window.location.href='https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s'">📢 WhatsApp Channel</button>
-    <button class="btn" onclick="window.location.href='tel:+254105521300'">📞 Contact Owner</button>
-    <button class="btn" onclick="window.location.href='/code'">🔑 Show Codes</button>
-
-    <!-- Music autoplay -->
-    <div id="musicControls">
-      <audio id="bgMusic" autoplay loop>
-        <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-      </audio>
-      <button id="pauseBtn">⏸ Pause Music</button>
+    <div class="input-box">
+      <input type="text" id="number" placeholder="e.g. 2547xxxxxxx">
     </div>
 
-    <div class="footer">© Powered by Official Guru</div>
+    <button class="btn" onclick="generateCode()">Generate Pairing Code</button>
+
+    <!-- Code will show automatically here -->
+    <div id="code-box" class="code-box" style="display: none;"></div>
+
+    <!-- Buttons -->
+    <a href="https://github.com/itsguruh/Pairing1" target="_blank" class="btn">🌐 GitHub</a>
+    <a href="https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s" target="_blank" class="btn">📢 WhatsApp Channel</a>
+    <a href="https://wa.me/254105521300" target="_blank" class="btn">📞 Contact Owner</a>
+
+    <!-- Music Controls -->
+    <div class="music-controls">
+      <audio id="bg-music" autoplay loop>
+        <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+      </audio>
+      <button class="pause-btn" onclick="toggleMusic()">⏯ Pause/Play Music</button>
+    </div>
   </div>
 
   <script>
     // Floating stars generator
     const starsContainer = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 50; i++) {
       const star = document.createElement('div');
       star.className = 'star';
-      star.style.top = Math.random() * window.innerHeight + 'px';
-      star.style.left = Math.random() * window.innerWidth + 'px';
-      star.style.animationDuration = (2 + Math.random() * 3) + 's';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.animationDuration = (5 + Math.random() * 10) + 's';
       starsContainer.appendChild(star);
     }
 
-    // Music controls
-    const music = document.getElementById("bgMusic");
-    const pauseBtn = document.getElementById("pauseBtn");
-    pauseBtn.addEventListener("click", () => {
+    // Generate code function
+    async function generateCode() {
+      const number = document.getElementById('number').value;
+      if (!number) {
+        alert('⚠️ Please enter your WhatsApp number!');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/pair?number=${encodeURIComponent(number)}`);
+        const data = await response.json();
+
+        const codeBox = document.getElementById('code-box');
+        codeBox.style.display = 'block';
+
+        if (data.code) {
+          codeBox.innerText = "🔑 Pairing Code: " + data.code;
+        } else if (data.error) {
+          codeBox.innerText = "❌ Error: " + data.error;
+        } else {
+          codeBox.innerText = "⚠️ Unexpected response from server.";
+        }
+      } catch (err) {
+        alert('❌ Connection failed. Please try again later.');
+        console.error(err);
+      }
+    }
+
+    // Music toggle
+    const music = document.getElementById('bg-music');
+    function toggleMusic() {
       if (music.paused) {
         music.play();
-        pauseBtn.textContent = "⏸ Pause Music";
       } else {
         music.pause();
-        pauseBtn.textContent = "▶️ Play Music";
       }
-    });
+    }
   </script>
 </body>
 </html>
