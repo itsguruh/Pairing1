@@ -15,12 +15,10 @@
       overflow: hidden;
     }
 
-    /* Floating stars background */
     .stars {
       position: absolute;
       width: 100%;
       height: 100%;
-      background: transparent;
       z-index: -1;
       overflow: hidden;
     }
@@ -54,7 +52,7 @@
     h1 {
       font-size: 28px;
       margin-bottom: 10px;
-      color: #d2b48c; /* brownish gold */
+      color: #d2b48c;
     }
 
     .input-box {
@@ -71,7 +69,6 @@
       text-align: center;
     }
 
-    /* Button style (old look restored) */
     .btn {
       display: block;
       margin: 15px auto;
@@ -91,7 +88,6 @@
       color: black;
     }
 
-    /* Generated code box */
     .code-box {
       margin-top: 20px;
       padding: 15px;
@@ -103,9 +99,9 @@
       margin-right: auto;
       font-size: 18px;
       font-weight: bold;
+      white-space: pre-line;
     }
 
-    /* Music controls */
     .music-controls {
       margin-top: 20px;
     }
@@ -138,15 +134,12 @@
 
     <button class="btn" onclick="generateCode()">Generate Pairing Code</button>
 
-    <!-- Code will show automatically here -->
     <div id="code-box" class="code-box" style="display: none;"></div>
 
-    <!-- Buttons -->
     <a href="https://github.com/itsguruh/Pairing1" target="_blank" class="btn">🌐 GitHub</a>
     <a href="https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s" target="_blank" class="btn">📢 WhatsApp Channel</a>
     <a href="https://wa.me/254105521300" target="_blank" class="btn">📞 Contact Owner</a>
 
-    <!-- Music Controls -->
     <div class="music-controls">
       <audio id="bg-music" autoplay loop>
         <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
@@ -156,7 +149,7 @@
   </div>
 
   <script>
-    // Floating stars generator
+    // Floating stars
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 50; i++) {
       const star = document.createElement('div');
@@ -167,31 +160,40 @@
       starsContainer.appendChild(star);
     }
 
-    // Generate code function
-    async function generateCode() {
+    let refreshInterval;
+
+    async function generateCode(auto = false) {
       const number = document.getElementById('number').value;
-      if (!number) {
-        alert('⚠️ Please enter your WhatsApp number!');
+      if (!number && !auto) {
+        alert('Please enter a number!');
         return;
       }
 
       try {
-        const response = await fetch(`/api/pair?number=${encodeURIComponent(number)}`);
+        const response = await fetch(`/code?number=${encodeURIComponent(number)}`);
         const data = await response.json();
 
         const codeBox = document.getElementById('code-box');
         codeBox.style.display = 'block';
 
         if (data.code) {
-          codeBox.innerText = "🔑 Pairing Code: " + data.code;
+          codeBox.innerText = "🔑 Pairing Code: " + data.code + "\n(Refreshes every 60s)";
         } else if (data.error) {
-          codeBox.innerText = "❌ Error: " + data.error;
+          codeBox.innerText = data.error + "\nRetrying in 60s...";
         } else {
-          codeBox.innerText = "⚠️ Unexpected response from server.";
+          codeBox.innerText = "❗ Unknown response, retrying in 60s...";
         }
+
+        // auto-refresh every 60s
+        clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => generateCode(true), 60000);
+
       } catch (err) {
-        alert('❌ Connection failed. Please try again later.');
-        console.error(err);
+        const codeBox = document.getElementById('code-box');
+        codeBox.style.display = 'block';
+        codeBox.innerText = "❗ Error connecting to server. Retrying in 60s...";
+        clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => generateCode(true), 60000);
       }
     }
 
@@ -206,4 +208,4 @@
     }
   </script>
 </body>
-</html>
+        </html>
