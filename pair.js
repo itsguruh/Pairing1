@@ -1,30 +1,12 @@
-const { makeid } = require('./gen-id'); // ✅ Now works fine
+const { makeid } = require('./gen-id');
 const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const {
-  default: makeWASocket,
-  useMultiFileAuthState,
-  delay,
-  Browsers,
-  makeCacheableSignalKeyStore,
-  getAggregateVotesInPollMessage,
-  DisconnectReason,
-  WA_DEFAULT_EPHEMERAL,
-  jidNormalizedUser,
-  proto,
-  getDevice,
-  generateWAMessageFromContent,
-  fetchLatestBaileysVersion,
-  makeInMemoryStore,
-  getContentType,
-  generateForwardMessageContent,
-  downloadContentFromMessage,
-  jidDecode
-} = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
 
 const { upload } = require('./mega');
+
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
@@ -37,6 +19,13 @@ router.get('/', async (req, res) => {
     async function GIFTED_MD_PAIR_CODE() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
+            var items = ["Safari"];
+            function selectRandomItem(array) {
+                var randomIndex = Math.floor(Math.random() * array.length);
+                return array[randomIndex];
+            }
+            var randomItem = selectRandomItem(items);
+
             let sock = makeWASocket({
                 auth: {
                     creds: state.creds,
@@ -46,7 +35,7 @@ router.get('/', async (req, res) => {
                 generateHighQualityLinkPreview: true,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
                 syncFullHistory: false,
-                browser: Browsers.macOS("Safari")
+                browser: Browsers.macOS(randomItem)
             });
 
             if (!sock.authState.creds.registered) {
@@ -64,6 +53,7 @@ router.get('/', async (req, res) => {
 
                 if (connection == "open") {
                     await delay(5000);
+                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     let rf = __dirname + `/temp/${id}/creds.json`;
 
                     function generateRandomText() {
@@ -76,15 +66,16 @@ router.get('/', async (req, res) => {
                         }
                         return randomText;
                     }
-
                     const randomText = generateRandomText();
                     try {
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "CRYPTIX-MD~" + string_session;
 
+                        // Send session ID
                         await sock.sendMessage(sock.user.id, { text: md });
 
+                        // Send description with image
                         let desc = `*😉 Hello there ! 💕* 
 
 > Your session ID🌀♻️: ${md}
@@ -98,15 +89,46 @@ Don't forget to fork the repo ⬇️
                         await sock.sendMessage(sock.user.id, {
                             image: { url: 'https://files.catbox.moe/f6q239.jpg' },
                             caption: desc,
+                            contextInfo: {
+                                forwardingScore: 1,
+                                isForwarded: true,
+                                forwardedNewsletterMessageInfo: {
+                                    newsletterJid: '120363405400048680@newsletter',
+                                    newsletterName: 'CRYPTIX-MD',
+                                    serverMessageId: -1
+                                }
+                            }
                         });
+
+                        // 🎵 Send music (voice note style)
+                        await sock.sendMessage(sock.user.id, {
+                            audio: { url: 'https://yourdomain.com/music.mp3' }, // replace with your mp3 url or path
+                            mimetype: 'audio/mp4',
+                            ptt: true
+                        });
+
                     } catch (e) {
                         console.error("Error:", e);
-                        let errorMsg = `*Error occurred:* ${e.toString()}`;
-                        await sock.sendMessage(sock.user.id, { text: errorMsg });
+                        let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/itsguruh/CRYPTIX-MD`;
+                        await sock.sendMessage(sock.user.id, {
+                            text: errorMsg,
+                            contextInfo: {
+                                forwardingScore: 1,
+                                isForwarded: true,
+                                forwardedNewsletterMessageInfo: {
+                                    newsletterJid: '1120363405400048680@newsletter',
+                                    newsletterName: 'CRYPTIX-MD',
+                                    serverMessageId: -1
+                                }
+                            }
+                        });
                     }
+
                     await delay(10);
                     await sock.ws.close();
                     await removeFile('./temp/' + id);
+                    console.log(`👤 ${sock.user.id} Connected ✅ Restarting process...`);
+                    await delay(10);
                     process.exit();
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
                     await delay(10);
@@ -121,7 +143,6 @@ Don't forget to fork the repo ⬇️
             }
         }
     }
-   return await GIFTED_MD_PAIR_CODE();
+    return await GIFTED_MD_PAIR_CODE();
 });
-
 module.exports = router;
