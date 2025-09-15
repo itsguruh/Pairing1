@@ -5,96 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRYPTIX-MD Pairing</title>
   <style>
-    :root {
-      --primary: #8B4513;        /* Brown */
-      --primary-dark: #5C3317;   /* Darker brown */
-      --secondary: #1a1a1a;      /* Black */
-      --background: #0d0d0d;     /* Deep black */
-      --card-bg: #161616;        /* Slightly lighter black */
-      --text: #ffffff;           /* White */
-      --text-muted: #b0b0b0;     /* Soft gray */
-      --click-color: #000000;    /* Button pressed black */
-      --accent: #ffffff;         /* White accent */
-    }
-
     body {
       font-family: Arial, sans-serif;
-      background: var(--background);
-      color: var(--text);
       text-align: center;
-      padding: 40px;
+      background-color: #111; /* black */
+      color: #fff; /* white text */
+      margin: 0;
+      padding: 0;
     }
     h1 {
-      color: var(--primary);
+      color: #a0522d; /* brown */
+      margin-top: 40px;
+    }
+    input {
+      padding: 10px;
+      margin: 15px 0;
+      border: 2px solid #a0522d;
+      border-radius: 6px;
+      width: 250px;
+      background: #fff;
+      color: #000;
     }
     button {
       padding: 10px 20px;
-      margin-top: 20px;
+      background-color: #a0522d; /* brown */
+      color: #fff;
       border: none;
       border-radius: 6px;
-      font-size: 16px;
       cursor: pointer;
-      background: var(--primary);
-      color: var(--text);
-      transition: 0.3s;
+      transition: background 0.3s;
     }
     button:hover {
-      background: var(--primary-dark);
+      background-color: #fff;
+      color: #000;
+    }
+    button:active {
+      background-color: #000;
+      color: #fff;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
     }
     #music-controls {
-      margin-top: 30px;
-    }
-    .pair-box {
-      margin-top: 30px;
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      display: inline-block;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-  <h1>CRYPTIX-MD Pairing Code</h1>
+  <h1>CRYPTIX-MD<br>Pairing Code</h1>
+
   <p>Enter your number with country code to generate a pairing code:</p>
 
-  <div class="pair-box">
-    <form id="pairForm">
-      <input type="text" id="number" placeholder="2547xxxxxxxx" required>
-      <button type="submit">Get Pairing Code</button>
-    </form>
-    <p id="result"></p>
-  </div>
+  <input type="text" id="number" placeholder="254700000000" />
+  <br>
+  <button onclick="getCode()">Get Pairing Code</button>
 
-  <!-- 🎵 Background Music -->
+  <div id="result"></div>
+
+  <!-- Music controls -->
   <div id="music-controls">
+    <button onclick="toggleMusic()">▶ Play / ⏸ Pause Music</button>
     <audio id="bg-music" loop>
       <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
     </audio>
-    <button onclick="toggleMusic()">▶ Play / ⏸ Pause Music</button>
   </div>
 
   <script>
-    // Handle pairing request
-    document.getElementById('pairForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const number = document.getElementById('number').value;
-      document.getElementById('result').textContent = "⏳ Generating code...";
+    async function getCode() {
+      const number = document.getElementById("number").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (!number) {
+        resultDiv.innerHTML = "⚠️ Please enter a valid number.";
+        return;
+      }
+
       try {
-        const res = await fetch(`/pair?number=${number}`);
-        const data = await res.json();
+        // ✅ Fixed: call backend API
+        const response = await fetch(`/api/pair?number=${number}`);
+        const data = await response.json();
+
         if (data.code) {
-          document.getElementById('result').textContent = "✅ Pairing Code: " + data.code;
-        } else if (data.error) {
-          document.getElementById('result').textContent = "❌ " + data.error;
+          resultDiv.innerHTML = `✅ Your Pairing Code: <b>${data.code}</b>`;
+        } else {
+          resultDiv.innerHTML = `⚠️ Error: ${JSON.stringify(data)}`;
         }
       } catch (err) {
-        document.getElementById('result').textContent = "⚠️ Error: " + err;
+        resultDiv.innerHTML = `⚠️ Error: ${err}`;
       }
-    });
+    }
 
-    // 🎵 Music toggle
-    const music = document.getElementById("bg-music");
+    // 🎵 Play / Pause music
     function toggleMusic() {
+      const music = document.getElementById("bg-music");
       if (music.paused) {
         music.play();
       } else {
