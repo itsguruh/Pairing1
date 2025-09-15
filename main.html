@@ -7,91 +7,77 @@
     body {
       margin: 0;
       padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
       background: black;
       color: white;
       text-align: center;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
     }
-    /* Floating stars background */
-    .stars {
+    canvas {
       position: fixed;
-      width: 100%;
-      height: 100%;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: -1;
-      background: black;
-      overflow: hidden;
     }
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle 3s infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 1; }
-    }
-
-    /* Bot image */
     img {
       width: 120px;
       margin: 20px auto;
       display: block;
       border-radius: 50%;
-      box-shadow: 0 0 15px brown;
+      box-shadow: 0 0 25px brown;
     }
-
-    /* Input */
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px white;
+    }
     input {
-      padding: 10px;
+      padding: 12px;
       border-radius: 8px;
       border: none;
       margin: 10px;
-      width: 250px;
+      width: 260px;
       text-align: center;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 0 10px brown;
     }
-
-    /* Buttons */
     button {
       display: block;
       margin: 10px auto;
       background: brown;
       color: white;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      width: 250px;
+      width: 260px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 0 15px brown;
       transition: all 0.3s ease-in-out;
     }
     button:hover {
       background: white;
       color: black;
+      box-shadow: 0 0 20px white;
     }
-
     #result {
       margin-top: 20px;
       font-weight: bold;
       color: yellow;
+      font-size: 18px;
+      text-shadow: 0 0 10px black;
     }
-
-    /* Music control */
-    #musicControl {
-      margin-top: 15px;
-      font-size: 14px;
-      color: gray;
-      cursor: pointer;
+    #music-controls {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- Stars background -->
-  <div class="stars" id="stars"></div>
+  <!-- Floating stars -->
+  <canvas id="stars"></canvas>
 
   <!-- Bot Logo -->
   <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
@@ -102,22 +88,29 @@
   <input id="phone" type="text" placeholder="Enter phone number with country code">
   <button onclick="getCode()">Get Pairing Code</button>
 
-  <!-- Extra buttons -->
-  <button onclick="window.open('https://github.com/itsguruh/Pairing1','_blank')">🌐 GitHub</button>
-  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">📢 WhatsApp Channel</button>
-  <button onclick="window.open('https://wa.me/254105521300','_blank')">📞 Contact Owner</button>
+  <!-- Buttons for external links -->
+  <button onclick="window.open('https://github.com/itsguruh/Pairing1','_blank')">
+    🌐 GitHub
+  </button>
+  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">
+    📢 WhatsApp Channel
+  </button>
+  <button onclick="window.open('https://wa.me/254105521300','_blank')">
+    📞 Contact Owner
+  </button>
 
-  <!-- Pairing result -->
+  <!-- Music controls -->
+  <div id="music-controls">
+    <button onclick="toggleMusic()">⏯ Pause/Play Music</button>
+  </div>
+
+  <!-- Result (pairing code) -->
   <div id="result"></div>
 
-  <!-- Background Music -->
-  <audio id="bgMusic" loop autoplay>
-    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-  </audio>
-  <div id="musicControl" onclick="toggleMusic()">⏸ Pause Music</div>
+  <!-- Music autoplay -->
+  <audio id="bg-music" src="https://files.catbox.moe/0joaof.mp3" autoplay loop></audio>
 
   <script>
-    // Pairing Code Fetch
     async function getCode() {
       const phone = document.getElementById("phone").value.trim();
       const result = document.getElementById("result");
@@ -129,6 +122,7 @@
 
       try {
         result.innerText = "⏳ Generating code...";
+        // ✅ Fixed: fetch JSON from /code
         const res = await fetch(`/code?number=${encodeURIComponent(phone)}`);
         const data = await res.json();
         result.innerText = "🔑 Pairing Code: " + data.code;
@@ -137,32 +131,48 @@
       }
     }
 
-    // Music control
+    // Music toggle
     function toggleMusic() {
-      const music = document.getElementById("bgMusic");
-      const control = document.getElementById("musicControl");
+      const music = document.getElementById("bg-music");
       if (music.paused) {
         music.play();
-        control.innerText = "⏸ Pause Music";
       } else {
         music.pause();
-        control.innerText = "▶️ Play Music";
       }
     }
 
-    // Generate floating stars
-    function createStars() {
-      const starsContainer = document.getElementById("stars");
-      for (let i = 0; i < 100; i++) {
-        let star = document.createElement("div");
-        star.className = "star";
-        star.style.top = Math.random() * 100 + "%";
-        star.style.left = Math.random() * 100 + "%";
-        star.style.animationDuration = (2 + Math.random() * 3) + "s";
-        starsContainer.appendChild(star);
-      }
+    // Floating stars animation
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = Array.from({ length: 100 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2,
+        speed: Math.random() * 0.5 + 0.2
+      }));
     }
-    createStars();
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > canvas.height) star.y = 0;
+      });
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    drawStars();
   </script>
 </body>
-    </html>
+  </html>
