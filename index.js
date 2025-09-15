@@ -1,11 +1,11 @@
 const express = require('express');
-const app = express();
 const bodyParser = require("body-parser");
 const path = require("path");
 
+const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Import routes
+// Import backend routes
 let server = require('./qr');
 let code = require('./pair');
 
@@ -15,14 +15,14 @@ require('events').EventEmitter.defaultMaxListeners = 500;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files (CSS, JS, images, etc.)
+// Serve static files (CSS, JS, images, audio, etc.)
 app.use(express.static(path.join(__dirname)));
 
 // Routes
 app.use('/server', server);
 app.use('/code', code);
 
-// HTML pages
+// Serve HTML pages
 app.get('/pair', (req, res) => {
     res.sendFile(path.join(__dirname, 'pair.html'));
 });
@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`🚀 CRYPTIX-MD running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
 module.exports = app;
