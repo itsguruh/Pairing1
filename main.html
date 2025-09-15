@@ -1,285 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CRYPTIX MD - Pairing</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CRYPTIX-MD Pairing</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       font-family: Arial, sans-serif;
-      background: black;
+      background: radial-gradient(circle at top, #000000, #2e2b28);
       color: white;
+      overflow: hidden;
       text-align: center;
     }
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
+
+    /* Floating stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      animation: twinkle 5s infinite;
     }
-    img {
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    img.logo {
+      margin-top: 20px;
       width: 120px;
-      margin: 20px auto;
-      display: block;
       border-radius: 50%;
-      box-shadow: 0 0 25px brown;
+      box-shadow: 0 0 20px #fff;
     }
+
     h1 {
-      margin-bottom: 20px;
-      text-shadow: 0 0 15px white;
+      margin: 10px 0;
+      font-size: 28px;
+      color: #d2b48c;
     }
+
     input {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      width: 220px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .btn {
+      display: block;
+      width: 240px;
+      margin: 12px auto;
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(45deg, #000, #8b4513);
+      box-shadow: 0 0 15px #8b4513;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    #codeBox {
+      margin-top: 20px;
       padding: 12px;
       border-radius: 8px;
-      border: none;
-      margin: 10px;
-      width: 260px;
-      text-align: center;
-      font-size: 16px;
-      outline: none;
-      box-shadow: 0 0 10px brown;
-    }
-    button {
-      display: block;
-      margin: 10px auto;
-      background: brown;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 260px;
-      font-size: 16px;
-      font-weight: bold;
-      box-shadow: 0 0 15px brown;
-      transition: all 0.3s ease-in-out;
-    }
-    button:hover {
-      background: white;
-      color: black;
-      box-shadow: 0 0 20px white;
-    }
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-      color: yellow;
+      background: #111;
+      color: #fff;
+      display: none;
       font-size: 18px;
-      text-shadow: 0 0 10px black;
+      width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 12px #8b4513;
     }
-    #music-controls {
-      margin-top: 20px;
+
+    /* Music button */
+    #pauseBtn {
+      margin-top: 15px;
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: none;
+      background: #8b4513;
+      color: white;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <!-- Floating stars -->
-  <canvas id="stars"></canvas>
+  <!-- Stars -->
+  <div id="stars"></div>
 
-  <!-- Bot Logo -->
-  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
-  
-  <h1>CRYPTIX MD Pairing</h1>
+  <!-- Bot logo -->
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo" />
+  <h1>CRYPTIX-MD PAIRING</h1>
 
-  <!-- Phone input + pairing button -->
-  <input id="phone" type="text" placeholder="Enter phone number with country code">
-  <button onclick="getCode()">Get Pairing Code</button>
+  <!-- Input -->
+  <input type="text" id="number" placeholder="Enter your WhatsApp number"/>
 
-  <!-- Buttons for external links -->
-  <button onclick="window.open('https://github.com/itsguruh/Pairing1','_blank')">
-    🌐 GitHub
-  </button>
-  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">
-    📢 WhatsApp Channel
-  </button>
-  <button onclick="window.open('https://wa.me/254105521300','_blank')">
-    📞 Contact Owner
-  </button>
+  <!-- Buttons -->
+  <button class="btn" onclick="generateCode()">Generate Code</button>
+  <button class="btn" onclick="window.open('https://github.com/itsguruh/CRYPTIX-MD','_blank')">GitHub</button>
+  <button class="btn" onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">WhatsApp Channel</button>
+  <button class="btn" onclick="window.open('https://wa.me/254105521300','_blank')">Contact Owner</button>
 
-  <!-- Music controls -->
-  <div id="music-controls">
-    <button onclick="toggleMusic()">⏯ Pause/Play Music</button>
-  </div>
+  <!-- Generated code box -->
+  <div id="codeBox"></div>
 
-  <!-- Result (pairing code) -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>CRYPTIX MD - Pair</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: black;
-      color: white;
-      text-align: center;
-    }
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    img {
-      width: 120px;
-      margin: 20px auto;
-      display: block;
-      border-radius: 50%;
-      box-shadow: 0 0 25px brown;
-    }
-    h1 {
-      margin-bottom: 20px;
-      text-shadow: 0 0 15px white;
-    }
-    input {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      margin: 10px;
-      width: 260px;
-      text-align: center;
-      font-size: 16px;
-      outline: none;
-      box-shadow: 0 0 10px brown;
-    }
-    button {
-      display: block;
-      margin: 10px auto;
-      background: brown;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 260px;
-      font-size: 16px;
-      font-weight: bold;
-      box-shadow: 0 0 15px brown;
-      transition: all 0.3s ease-in-out;
-    }
-    button:hover {
-      background: white;
-      color: black;
-      box-shadow: 0 0 20px white;
-    }
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-      color: yellow;
-      font-size: 18px;
-      text-shadow: 0 0 10px black;
-    }
-    #music-controls {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <!-- Floating stars -->
-  <canvas id="stars"></canvas>
-
-  <!-- Bot Logo -->
-  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
-  
-  <h1>CRYPTIX MD - Pairing Code</h1>
-
-  <!-- Phone input + pairing button -->
-  <input id="phone" type="text" placeholder="Enter phone number with country code">
-  <button onclick="getCode()">Generate Pair Code</button>
-
-  <!-- Extra Buttons -->
-  <button onclick="window.open('https://github.com/itsguruh/Pairing1','_blank')">
-    🌐 GitHub
-  </button>
-  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">
-    📢 WhatsApp Channel
-  </button>
-  <button onclick="window.open('https://wa.me/254105521300','_blank')">
-    📞 Contact Owner
-  </button>
-
-  <!-- Music controls -->
-  <div id="music-controls">
-    <button onclick="toggleMusic()">⏯ Pause/Play Music</button>
-  </div>
-
-  <!-- Result (pairing code) -->
-  <div id="result"></div>
-
-  <!-- Music autoplay -->
-  <audio id="bg-music" src="https://files.catbox.moe/0joaof.mp3" autoplay loop></audio>
+  <!-- Music -->
+  <audio id="bgMusic" autoplay loop>
+    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+  </audio>
+  <button id="pauseBtn" onclick="toggleMusic()">Pause Music</button>
 
   <script>
-    async function getCode() {
-      const phone = document.getElementById("phone").value.trim();
-      const result = document.getElementById("result");
+    // Stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 50; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.top = Math.random() * window.innerHeight + 'px';
+      star.style.left = Math.random() * window.innerWidth + 'px';
+      star.style.animationDuration = (2 + Math.random() * 3) + 's';
+      starsContainer.appendChild(star);
+    }
 
-      if (!phone) {
-        result.innerText = "❗ Please enter your phone number first";
+    // Generate Code
+    async function generateCode() {
+      const number = document.getElementById("number").value;
+      if (!number) {
+        alert("Please enter your WhatsApp number");
         return;
       }
-
       try {
-        result.innerText = "⏳ Generating code...";
-        // ✅ Fixed: fetch JSON from /code
-        const res = await fetch(`/code?number=${encodeURIComponent(phone)}`);
-        const data = await res.json();
-        result.innerText = "🔑 Pairing Code: " + data.code;
+        const response = await fetch(`/code?number=${number}`);
+        const data = await response.json();
+        document.getElementById("codeBox").style.display = "block";
+        document.getElementById("codeBox").innerText = "Your Code: " + data.code;
       } catch (err) {
-        result.innerText = "❗ Error: " + err.message;
+        console.error(err);
+        alert("Error generating code");
       }
     }
 
     // Music toggle
+    const music = document.getElementById("bgMusic");
+    const pauseBtn = document.getElementById("pauseBtn");
     function toggleMusic() {
-      const music = document.getElementById("bg-music");
       if (music.paused) {
         music.play();
+        pauseBtn.innerText = "Pause Music";
       } else {
         music.pause();
+        pauseBtn.innerText = "Play Music";
       }
     }
-
-    // Floating stars animation
-    const canvas = document.getElementById("stars");
-    const ctx = canvas.getContext("2d");
-    let stars = [];
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = Array.from({ length: 100 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-        speed: Math.random() * 0.5 + 0.2
-      }));
-    }
-
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) star.y = 0;
-      });
-      requestAnimationFrame(drawStars);
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
-    drawStars();
   </script>
 </body>
-    </html>
+</html>
