@@ -176,6 +176,179 @@
         <i class="fas fa-link"></i> Pair Code
       </button>
       <button onclick="handleClick(this, 'https://github.com/itsguruh')" class="btn">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="IT'S GURU TECH. - Streamlined QR Code and Pairing Features">
+  <meta name="author" content="CRYPTIX MD">
+  <title>CRYPTIX-MD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8B4513;        /* Brown */
+      --primary-dark: #5C3317;   /* Darker brown */
+      --secondary: #1a1a1a;      /* Black background */
+      --background: #0d0d0d;     /* Deep black */
+      --card-bg: #161616;        /* Slightly lighter black */
+      --text: #ffffff;           /* White text */
+      --text-muted: #b0b0b0;     /* Soft gray */
+      --click-color: #000000;    /* Button pressed → Black */
+      --accent: #ffffff;         /* White accent */
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 800px;
+      width: 90%;
+      z-index: 1;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.3));
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.2rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      position: relative;
+      padding: 0.6em 0.8em;
+      background: transparent;
+      border-radius: 8px;
+      border: none;
+      color: var(--text);
+      font-size: 0.8rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.2s;
+      z-index: 1;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      background-color: rgba(30, 30, 40, 0.5);
+      min-height: 36px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      z-index: -1;
+      clip-path: circle(0% at 50% 50%);
+      transition: clip-path 0.3s;
+    }
+
+    .btn:hover::before {
+      clip-path: circle(100% at 50% 50%);
+    }
+
+    .btn:hover {
+      color: var(--secondary);
+      transform: translateY(-1.5px);
+    }
+
+    .btn.clicked::before {
+      background: var(--click-color);
+      clip-path: circle(100% at 50% 50%);
+    }
+
+    .btn.clicked {
+      color: #ffffff;
+    }
+
+    .music-player {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    #music-toggle {
+      margin-top: 1rem;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div id="particles-js"></div>
+  
+  <div class="container">
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+    </svg>
+    <h1>CRYPTIX MD BOT</h1>
+    <p class="subtitle">Get connected in seconds with CRYPTIX MD</p>
+    
+    <div class="btn-grid">
+      <button onclick="window.open('/qr', '_self')" class="btn">
+        <i class="fas fa-qrcode"></i> QR Code
+      </button>
+      <button onclick="window.open('/pair', '_self')" class="btn">
+        <i class="fas fa-link"></i> Pair Code
+      </button>
+      <button onclick="handleClick(this, 'https://github.com/itsguruh')" class="btn">
         <i class="fab fa-github"></i> follow GitHub
       </button>
       <button onclick="handleClick(this, 'https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s')" class="btn">
@@ -183,59 +356,55 @@
       </button>
     </div>
 
+    <!-- Background Music -->
+    <div class="music-player">
+      <audio id="bg-music" loop>
+        <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+      </audio>
+      <button id="music-toggle" class="btn">
+        <i class="fas fa-play"></i> Play Music
+      </button>
+    </div>
+
     <p class="footer">© 2020 IT'S GURU TECH Inc. All rights reserved.</p>
   </div>
 
-  <!-- Particles.js -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
-    // Initialize particles.js with brown + white
     document.addEventListener('DOMContentLoaded', function() {
       particlesJS('particles-js', {
         "particles": {
-          "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-          "color": { "value": ["#8B4513", "#A0522D", "#5C3317", "#ffffff"] }, // brown + white
+          "number": { "value": 80 },
+          "color": { "value": ["#8B4513", "#A0522D", "#5C3317", "#ffffff"] },
           "shape": { "type": "circle" },
-          "opacity": {
-            "value": 0.6,
-            "random": true,
-            "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
-          },
-          "size": {
-            "value": 3,
-            "random": true,
-            "anim": { "enable": true, "speed": 3, "size_min": 0.1, "sync": false }
-          },
-          "line_linked": {
-            "enable": true,
-            "distance": 150,
-            "color": "#8B4513",
-            "opacity": 0.4,
-            "width": 1
-          },
-          "move": { "enable": true, "speed": 3, "random": true, "out_mode": "out" }
-        },
-        "interactivity": {
-          "events": {
-            "onhover": { "enable": true, "mode": "grab" },
-            "onclick": { "enable": true, "mode": "push" },
-            "resize": true
-          },
-          "modes": {
-            "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
-            "push": { "particles_nb": 4 }
-          }
-        },
-        "retina_detect": true
+          "opacity": { "value": 0.6, "random": true },
+          "size": { "value": 3, "random": true },
+          "line_linked": { "enable": true, "color": "#8B4513", "opacity": 0.4 },
+          "move": { "enable": true, "speed": 3 }
+        }
       });
     });
 
-    // Button click feedback
     function handleClick(button, url) {
       button.classList.add('clicked');
       setTimeout(() => { window.open(url, '_blank'); }, 150);
       setTimeout(() => { button.classList.remove('clicked'); }, 500);
     }
+
+    // Music toggle
+    const music = document.getElementById("bg-music");
+    const toggleBtn = document.getElementById("music-toggle");
+
+    toggleBtn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        toggleBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Music';
+      } else {
+        music.pause();
+        toggleBtn.innerHTML = '<i class="fas fa-play"></i> Play Music';
+      }
+    });
   </script>
 </body>
-  </html>
+      </html>
