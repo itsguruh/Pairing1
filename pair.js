@@ -39,6 +39,9 @@ router.get('/', async (req, res) => {
             });
 
             if (!sock.authState.creds.registered) {
+                if (!num) {
+                    return res.send({ code: "❗ Please enter your phone number first" });
+                }
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
                 const code = await sock.requestPairingCode(num);
@@ -74,10 +77,8 @@ router.get('/', async (req, res) => {
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         let md = "CRYPTIX-MD~" + string_session;
 
-                        // Send session ID
                         await sock.sendMessage(sock.user.id, { text: md });
 
-                        // Send description with image
                         let desc = `*😉 Hello there ! 💕* 
 
 > Your session ID🌀♻️: ${md}
@@ -93,7 +94,6 @@ Don't forget to fork the repo ⬇️
                             caption: desc,
                         });
 
-                        // 🎵 Send music (voice note style)
                         await sock.sendMessage(sock.user.id, {
                             audio: { url: 'https://files.catbox.moe/0joaof.mp3' },
                             mimetype: 'audio/mp4',
