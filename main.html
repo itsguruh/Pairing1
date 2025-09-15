@@ -105,6 +105,113 @@
   </div>
 
   <!-- Result (pairing code) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRYPTIX MD - Pair</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: black;
+      color: white;
+      text-align: center;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    img {
+      width: 120px;
+      margin: 20px auto;
+      display: block;
+      border-radius: 50%;
+      box-shadow: 0 0 25px brown;
+    }
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 15px white;
+    }
+    input {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin: 10px;
+      width: 260px;
+      text-align: center;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 0 10px brown;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      background: brown;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 260px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 0 15px brown;
+      transition: all 0.3s ease-in-out;
+    }
+    button:hover {
+      background: white;
+      color: black;
+      box-shadow: 0 0 20px white;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: yellow;
+      font-size: 18px;
+      text-shadow: 0 0 10px black;
+    }
+    #music-controls {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating stars -->
+  <canvas id="stars"></canvas>
+
+  <!-- Bot Logo -->
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
+  
+  <h1>CRYPTIX MD - Pairing Code</h1>
+
+  <!-- Phone input + pairing button -->
+  <input id="phone" type="text" placeholder="Enter phone number with country code">
+  <button onclick="getCode()">Generate Pair Code</button>
+
+  <!-- Extra Buttons -->
+  <button onclick="window.open('https://github.com/itsguruh/Pairing1','_blank')">
+    🌐 GitHub
+  </button>
+  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')">
+    📢 WhatsApp Channel
+  </button>
+  <button onclick="window.open('https://wa.me/254105521300','_blank')">
+    📞 Contact Owner
+  </button>
+
+  <!-- Music controls -->
+  <div id="music-controls">
+    <button onclick="toggleMusic()">⏯ Pause/Play Music</button>
+  </div>
+
+  <!-- Result (pairing code) -->
   <div id="result"></div>
 
   <!-- Music autoplay -->
@@ -175,4 +282,4 @@
     drawStars();
   </script>
 </body>
-  </html>
+    </html>
