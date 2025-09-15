@@ -1,178 +1,107 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1737874207490861"
-            crossorigin="anonymous"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRYPTIX MD QR SCANNER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&amp;display=swap" rel="stylesheet">
-    <title>QR</title>
-    <style>
-        .bg {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-size: 400% 400%;
-            animation: AnimateBG 25s ease infinite;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRYPTIX-MD QR</title>
+  <style>
+    body {
+      background-color: #fff;
+      color: #3e2723; /* dark brown */
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-        @keyframes AnimateBG {
-            0% {
-                background-position: 0% 50%
-            }
+    img {
+      width: 120px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      border: 3px solid #3e2723;
+    }
 
-            50% {
-                background-position: 100% 50%
-            }
+    h1 {
+      color: #3e2723;
+      margin-bottom: 20px;
+    }
 
-            100% {
-                background-position: 0% 50%
-            }
-        }
+    #qrcode {
+      border: 3px solid #3e2723;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: #fff;
+      margin-bottom: 20px;
+    }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Outfit";
-            background: linear-gradient(-45deg, #4a90e2, #3ac569, #9b59b6, #e74c3c);
-            background-size: 400% 400%;
-            animation: gradient 10s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    button {
+      background-color: #3e2723; /* brown */
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      margin: 10px;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
+    button:hover {
+      background-color: #000; /* black on hover */
+    }
 
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        jsl.code {
-            overflow: hidden;
-            background: linear-gradient(-45deg, #f1c40f, #3498db, #2ecc71, #e74c3c);
-            background-size: 400% 400%;
-            animation: gradient 8s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            font-family: 'Montserrat', sans-serif;
-            height: 110vh;
-            margin: 0px;
-
-        }
-
-        p.legend {
-            color: #fff;
-            font-size: 1em;
-            font-weight: 400;
-            padding: 0em 1.1em;
-            margin-top: 0.1em;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-
-        :root {
-            --main-color: hsl(212, 45%, 89%);
-            --principalText-color: hsl(218, 44%, 22%);
-            --secondText-color: hsl(220, 15%, 55%);
-        }
-
-        #content {
-            display: flex;
-            flex-direction: column;
-            width: 22rem;
-            text-align: center;
-            background-color: #000000;
-            padding: 1rem;
-            border-radius: 14px;
-        }
-
-        #QR-content img {
-            border-radius: 10px;
-            width: 20rem;
-        }
-
-        #title-container {
-            padding: 1rem 1rem 0 1rem;
-            color: #fff;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        #description-container {
-            padding: 0 2.5rem 0 2.5rem;
-            color: #fff;
-            margin-bottom: 2rem;
-        }
-
-        #p-legend {
-            font-size: 1em;
-            font-weight: 400;
-            padding: 0em 1.1em;
-            margin-top: 0.1em;
-        }
-
-        .reload-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #3498db; /* Blue color */
-            color: #fff; /* White text color */
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .reload-button:hover {
-            background-color: #2980b9; /* Darker blue color on hover */
-        }
-    </style>
-    <script>
-        var timeleft = 30;
-        var downloadTimer = setInterval(function () {
-            if (timeleft <= 0) {
-                clearInterval(downloadTimer);
-                document.getElementById("progressBar").remove();
-                document.getElementById("main").innerHTML = "QR Expired! Please reload";
-                document.getElementById("legend").innerHTML = ""
-            }
-            document.getElementById("progressBar").value = 30 - timeleft;
-            timeleft -= 1;
-        }, 1000);
-    </script>
+    #music-controls {
+      margin-top: 25px;
+    }
+  </style>
 </head>
 <body>
-<div class="bg">
-    <div id="content">
-        <div id="QR-content">
-            <img id="qr-image" src="/server" alt="QR CODE">
-        </div>
-        <div id="title-container">
-            <h2 id="main">CRYPTIX-MD QR</h2>
-            <p class="legend" id="legend">Scan The QR Code</p>
-        </div>
-        <div id="description-container">
-            <p id="semi" class="legend"></p>
-            <progress value="0" max="30" id="progressBar"></progress>
-        </div>
-        <a href="javascript:history.go(0)" class="reload-button">Reload Page</a>
-    </div>
-</div>
+
+  <!-- Bot Logo -->
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot Logo">
+
+  <h1>Scan QR Code</h1>
+
+  <!-- QR container -->
+  <div id="qrcode">
+    <p>Your QR code will appear here...</p>
+  </div>
+
+  <!-- Button to refresh QR -->
+  <button onclick="refreshQR()">Refresh QR</button>
+
+  <!-- Music controls -->
+  <div id="music-controls">
+    <button onclick="toggleMusic()">⏯ Play / Pause Music</button>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bg-music" autoplay loop>
+    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    // Music controls
+    function toggleMusic() {
+      const music = document.getElementById("bg-music");
+      if (music.paused) {
+        music.play();
+      } else {
+        music.pause();
+      }
+    }
+
+    // Placeholder for refreshing QR code
+    function refreshQR() {
+      document.getElementById("qrcode").innerHTML = "<p>Fetching new QR code...</p>";
+      // Example: fetch QR from your backend if implemented
+      // fetch('/qr/new').then(res => res.json()).then(data => { ... });
+    }
+  </script>
+
 </body>
 </html>
