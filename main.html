@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRYPTIX-MD</title>
+  <title>CRYPTIX-MD | Main</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: black;
+      font-family: 'Poppins', sans-serif;
+      background: #0f0f0f;
       color: white;
       text-align: center;
+      overflow: hidden;
     }
 
-    /* Floating Stars Background */
     canvas {
       position: fixed;
       top: 0;
@@ -26,81 +25,104 @@
     }
 
     .logo {
-      margin-top: 30px;
+      margin-top: 25px;
     }
 
     .logo img {
-      width: 150px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      border: 3px solid brown;
+      border: 3px solid white;
+      box-shadow: 0 0 25px brown;
     }
 
     h1 {
-      color: white;
-      margin: 20px 0;
+      margin: 15px 0;
+      font-size: 2rem;
+      background: linear-gradient(90deg, brown, white);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .buttons {
-      margin-top: 30px;
-    }
-
+    /* --- OLD BUTTON STYLE RESTORED --- */
     .btn {
-      display: inline-block;
-      padding: 12px 25px;
-      margin: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      border: 2px solid white;
+      position: relative;
+      padding: 0.6em 0.8em;
+      margin: 12px;
       border-radius: 8px;
-      background: brown;
-      color: white;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.3s ease-in-out;
-      text-decoration: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      z-index: 1;
+      background-color: rgba(30, 30, 30, 0.6);
+      color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, brown, black);
+      z-index: -1;
+      clip-path: circle(0% at 50% 50%);
+      transition: clip-path 0.3s ease;
+    }
+
+    .btn:hover::before {
+      clip-path: circle(100% at 50% 50%);
     }
 
     .btn:hover {
-      background: white;
-      color: black;
-      border-color: brown;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(165, 42, 42, 0.6);
     }
 
-    /* Pause button */
+    .btn.clicked::before {
+      background: white;
+      clip-path: circle(100% at 50% 50%);
+    }
+
+    .btn.clicked {
+      color: black;
+    }
+
     #musicControl {
       margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 14px;
-      border: 2px solid white;
+      padding: 0.5em 1em;
       border-radius: 8px;
-      background: black;
+      border: none;
+      background: linear-gradient(135deg, brown, black);
       color: white;
       cursor: pointer;
-      transition: all 0.3s ease-in-out;
-    }
-
-    #musicControl:hover {
-      background: brown;
-      color: white;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <!-- Stars Background -->
   <canvas id="stars"></canvas>
 
-  <!-- Logo -->
+  <!-- Bot Logo -->
   <div class="logo">
-    <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Logo">
+    <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot">
   </div>
 
   <h1>Welcome to CRYPTIX-MD</h1>
 
-  <div class="buttons">
-    <a href="/pair" class="btn">Generate Pair Code</a>
-    <a href="https://github.com/itsguruh/Pairing1" target="_blank" class="btn">GitHub</a>
-    <a href="https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s" target="_blank" class="btn">WhatsApp Channel</a>
-    <a href="https://wa.me/254105521300" target="_blank" class="btn">Contact Owner</a>
-  </div>
+  <!-- Main Navigation Buttons -->
+  <button onclick="window.location.href='/pair'" class="btn">Generate Pair Code</button>
+  <button onclick="window.location.href='/qr'" class="btn">Scan QR Code</button>
+  <button onclick="window.open('https://github.com/itsguruh/CRYPTIX-MD','_blank')" class="btn">GitHub</button>
+  <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s','_blank')" class="btn">WhatsApp Channel</button>
+  <button onclick="window.open('https://wa.me/254105521300','_blank')" class="btn">Contact Owner</button>
 
   <!-- Music Control -->
   <button id="musicControl">⏸ Pause Music</button>
@@ -109,19 +131,19 @@
   </audio>
 
   <script>
-    // Floating stars animation
+    // Floating stars background
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     let stars = [];
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 120; i++) {
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         radius: Math.random() * 2,
-        color: ["white", "brown", "gray"][Math.floor(Math.random() * 3)]
+        color: ["white", "brown", "black"][Math.floor(Math.random() * 3)]
       });
     }
 
@@ -132,16 +154,14 @@
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
         ctx.fillStyle = star.color;
         ctx.fill();
-
-        // Move stars slightly for twinkle effect
-        star.y += 0.2;
+        star.y += 0.3;
         if (star.y > canvas.height) star.y = 0;
       });
       requestAnimationFrame(drawStars);
     }
     drawStars();
 
-    // Music Control
+    // Music control
     const bgMusic = document.getElementById("bgMusic");
     const musicControl = document.getElementById("musicControl");
     musicControl.addEventListener("click", () => {
@@ -155,4 +175,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
