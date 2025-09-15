@@ -3,138 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRYPTIX-MD Pairing</title>
+  <title>CRYPTIX MD - Pair</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    :root { --primary:#8B4513;--primary-dark:#5C3317;--secondary:#000;--text:#fff;--accent:#d2b48c; }
     body {
-      background-color: #fff;
-      color: #3e2723; /* dark brown */
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      margin:0; font-family:'Poppins',sans-serif;
+      background:linear-gradient(135deg,var(--secondary),var(--primary-dark));
+      color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:100vh; text-align:center;
     }
-
-    img {
-      width: 120px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      border: 3px solid #3e2723;
-    }
-
-    h1 {
-      color: #3e2723;
-      margin-bottom: 20px;
-    }
-
+    h1 { color:var(--accent); margin:10px 0; }
+    .logo { width:90px; border-radius:50%; margin-bottom:10px; border:2px solid var(--accent); }
     input {
-      padding: 10px;
-      width: 250px;
-      border: 2px solid #3e2723;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      font-size: 16px;
+      padding:0.8em; width:250px; border-radius:10px; border:2px solid var(--accent);
+      outline:none; margin-bottom:1rem; text-align:center; font-size:1rem;
     }
-
-    button {
-      background-color: #3e2723; /* brown */
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin: 5px;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    .btn {
+      padding:0.8em 1em; border-radius:10px; border:2px solid var(--accent);
+      background:transparent; color:var(--text); cursor:pointer; font-weight:600;
+      transition:0.3s ease;
     }
-
-    button:hover {
-      background-color: #000; /* black on hover */
-    }
-
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #000;
-    }
-
-    #music-controls {
-      margin-top: 25px;
-    }
+    .btn:hover { background:var(--primary); color:var(--secondary); }
   </style>
 </head>
 <body>
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
+  <h1>Enter Phone to Pair</h1>
+  <input type="text" placeholder="Enter your phone number">
+  <button class="btn"><i class="fas fa-link"></i> Get Pair Code</button>
 
-  <!-- Bot Logo -->
-  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot Logo">
-
-  <h1>Pair Your WhatsApp</h1>
-
-  <!-- Phone input -->
-  <input id="number" type="text" placeholder="Enter your WhatsApp number">
-
-  <!-- Buttons -->
-  <div>
-    <button onclick="generateCode()">Get Pairing Code</button>
-    <button onclick="fillMyNumber()">My Number</button>
-  </div>
-
-  <!-- Result -->
-  <div id="result"></div>
-
-  <!-- Music controls -->
-  <div id="music-controls">
-    <button onclick="toggleMusic()">⏯ Play / Pause Music</button>
-  </div>
-
-  <!-- Background music -->
   <audio id="bg-music" autoplay loop>
-    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
-    Your browser does not support the audio element.
+    <source src="https://files.catbox.moe/9gasul.mp3" type="audio/mpeg">
   </audio>
-
-  <script>
-    // Replace with your actual number
-    const myNumber = "2547XXXXXXXX"; 
-
-    function fillMyNumber() {
-      document.getElementById("number").value = myNumber;
-    }
-
-    async function generateCode() {
-      const num = document.getElementById("number").value;
-      if (!num) {
-        alert("Please enter a number first!");
-        return;
-      }
-
-      document.getElementById("result").innerText = "Generating code...";
-
-      try {
-        const response = await fetch(`/code?number=${encodeURIComponent(num)}`);
-        const data = await response.json();
-        if (data.code) {
-          document.getElementById("result").innerText = "Your Pairing Code: " + data.code;
-        } else {
-          document.getElementById("result").innerText = "Error: Service unavailable.";
-        }
-      } catch (err) {
-        document.getElementById("result").innerText = "Error connecting to server.";
-      }
-    }
-
-    // Music controls
-    function toggleMusic() {
-      const music = document.getElementById("bg-music");
-      if (music.paused) {
-        music.play();
-      } else {
-        music.pause();
-      }
-    }
-  </script>
-
 </body>
 </html>
