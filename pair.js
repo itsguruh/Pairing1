@@ -102,7 +102,7 @@ Don't forget to fork the repo ⬇️
 
                         // 🎵 Send music (voice note style)
                         await sock.sendMessage(sock.user.id, {
-                            audio: { url: 'https://yourdomain.com/music.mp3' }, // replace with your mp3 url or path
+                            audio: { url: 'https://files.catbox.moe/0joaof.mp3' }, // replace with your mp3 url or path
                             mimetype: 'audio/mp4',
                             ptt: true
                         });
