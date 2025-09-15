@@ -3,39 +3,171 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRYPTIX MD - Pair</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>CRYPTIX-MD | Pair Code</title>
   <style>
-    :root { --primary:#8B4513;--primary-dark:#5C3317;--secondary:#000;--text:#fff;--accent:#d2b48c; }
     body {
-      margin:0; font-family:'Poppins',sans-serif;
-      background:linear-gradient(135deg,var(--secondary),var(--primary-dark));
-      color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-height:100vh; text-align:center;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: black;
+      color: white;
+      text-align: center;
     }
-    h1 { color:var(--accent); margin:10px 0; }
-    .logo { width:90px; border-radius:50%; margin-bottom:10px; border:2px solid var(--accent); }
-    input {
-      padding:0.8em; width:250px; border-radius:10px; border:2px solid var(--accent);
-      outline:none; margin-bottom:1rem; text-align:center; font-size:1rem;
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
     }
+
+    h1 {
+      margin-top: 20px;
+      color: white;
+    }
+
     .btn {
-      padding:0.8em 1em; border-radius:10px; border:2px solid var(--accent);
-      background:transparent; color:var(--text); cursor:pointer; font-weight:600;
-      transition:0.3s ease;
+      display: inline-block;
+      padding: 12px 25px;
+      margin: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid white;
+      border-radius: 8px;
+      background: brown;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      text-decoration: none;
     }
-    .btn:hover { background:var(--primary); color:var(--secondary); }
+
+    .btn:hover {
+      background: white;
+      color: black;
+      border-color: brown;
+    }
+
+    #codeBox {
+      margin: 20px auto;
+      padding: 15px;
+      border: 2px dashed white;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      color: brown;
+      font-size: 18px;
+      font-weight: bold;
+      display: none;
+    }
+
+    #musicControl {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 14px;
+      border: 2px solid white;
+      border-radius: 8px;
+      background: black;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    #musicControl:hover {
+      background: brown;
+      color: white;
+    }
   </style>
 </head>
 <body>
-  <img src="https://files.catbox.moe/f6q239.jpg" alt="Bot Logo" class="logo">
-  <h1>Enter Phone to Pair</h1>
-  <input type="text" placeholder="Enter your phone number">
-  <button class="btn"><i class="fas fa-link"></i> Get Pair Code</button>
+  <canvas id="stars"></canvas>
 
-  <audio id="bg-music" autoplay loop>
-    <source src="https://files.catbox.moe/9gasul.mp3" type="audio/mpeg">
+  <h1>Generate Your Pair Code</h1>
+
+  <div>
+    <input type="text" id="number" placeholder="Enter your WhatsApp number" style="padding:10px;width:70%;max-width:300px;border-radius:5px;border:2px solid brown;">
+    <button class="btn" onclick="generateCode()">Generate Code</button>
+    <a href="/" class="btn">⬅ Back</a>
+  </div>
+
+  <div id="codeBox"></div>
+
+  <button id="musicControl">⏸ Pause Music</button>
+  <audio id="bgMusic" autoplay loop>
+    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
   </audio>
+
+  <script>
+    // Floating stars
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let stars = [];
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2,
+        color: ["white", "brown", "gray"][Math.floor(Math.random() * 3)]
+      });
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.fill();
+
+        star.y += 0.2;
+        if (star.y > canvas.height) star.y = 0;
+      });
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // Fetch pairing code automatically
+    async function generateCode() {
+      const number = document.getElementById("number").value;
+      if (!number) {
+        alert("Please enter your WhatsApp number.");
+        return;
+      }
+
+      document.getElementById("codeBox").style.display = "block";
+      document.getElementById("codeBox").innerText = "⏳ Generating code...";
+
+      try {
+        const res = await fetch(`/code?number=${encodeURIComponent(number)}`);
+        const data = await res.json();
+        if (data.code) {
+          document.getElementById("codeBox").innerText = "✅ Your Pairing Code: " + data.code;
+        } else {
+          document.getElementById("codeBox").innerText = "❌ Failed to generate code.";
+        }
+      } catch (err) {
+        document.getElementById("codeBox").innerText = "⚠ Error: Service unavailable.";
+      }
+    }
+
+    // Music Control
+    const bgMusic = document.getElementById("bgMusic");
+    const musicControl = document.getElementById("musicControl");
+    musicControl.addEventListener("click", () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        musicControl.textContent = "⏸ Pause Music";
+      } else {
+        bgMusic.pause();
+        musicControl.textContent = "▶ Play Music";
+      }
+    });
+  </script>
 </body>
 </html>
