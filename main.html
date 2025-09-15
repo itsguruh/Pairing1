@@ -3,296 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="IT'S GURU TECH. - Streamlined QR Code and Pairing Features">
-  <meta name="author" content="CRYPTIX MD">
   <title>CRYPTIX-MD</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #8B4513; /* Brown */
-      --primary-dark: #5C3317; /* Dark Brown */
-      --secondary: #000000; /* Black */
-      --background: #111111; /* Black background */
-      --card-bg: #1c1c1c; /* Dark gray */
-      --text: #ffffff; /* White */
-      --text-muted: #cccccc; /* Light gray */
-      --click-color: #333333; /* Dark gray when clicked */
-      --accent: #8B4513; /* Brown accent */
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
+      background-color: #fff;
+      color: #3e2723; /* dark brown */
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
-      background: var(--background);
-      color: var(--text);
-      font-family: 'Poppins', sans-serif;
-      background-image: 
-        radial-gradient(circle at 25% 25%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(92, 51, 23, 0.1) 0%, transparent 50%);
-      background-attachment: fixed;
-      overflow-x: hidden;
-      position: relative;
     }
 
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-    .container {
-      text-align: center;
-      padding: 2rem;
-      max-width: 800px;
-      width: 90%;
-      z-index: 1;
+    img {
+      width: 120px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      border: 3px solid #3e2723;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(90deg, var(--primary), var(--text));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      color: #3e2723;
+      margin-bottom: 20px;
     }
 
-    .subtitle {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      margin-bottom: 2.5rem;
-      font-weight: 300;
-    }
-
-    .btn-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 1.2rem;
-      width: 100%;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      position: relative;
-      padding: 0.6em 0.8em;
-      background: transparent;
-      border-radius: 8px;
-      border: 1px solid var(--primary);
-      color: var(--text);
-      font-size: 0.9rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn:hover {
-      background: var(--primary);
-      color: var(--secondary);
-    }
-
-    .btn.clicked {
-      background: var(--click-color);
-      color: var(--text);
-    }
-
-    /* Audio Player */
-    #audio-player {
-      margin: 2.5rem 0;
-      width: 100%;
-      max-width: 300px;
-    }
-
-    .audio-container {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1rem;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(139, 69, 19, 0.3);
-    }
-
-    .audio-title {
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 0.8rem;
-    }
-
-    .progress-container {
-      width: 100%;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 0.5rem;
-      cursor: pointer;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--primary), var(--text));
-    }
-
-    .time-display {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .control-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 0.8rem;
-    }
-
-    .control-btn {
-      background: var(--primary);
+    button {
+      background-color: #3e2723; /* brown */
+      color: white;
       border: none;
-      color: var(--secondary);
+      padding: 12px 25px;
+      margin: 10px;
+      border-radius: 5px;
+      font-size: 18px;
       cursor: pointer;
-      font-size: 1rem;
-      padding: 0.5rem;
-      border-radius: 50%;
-      transition: all 0.3s;
+      transition: background-color 0.3s ease;
     }
 
-    .control-btn:hover {
-      background: var(--text);
-      color: var(--primary);
+    button:hover {
+      background-color: #000; /* black on hover */
     }
 
-    .footer {
-      margin-top: 2.5rem;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    #music-controls {
+      margin-top: 25px;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div id="particles-js"></div>
-  
-  <div class="container">
-    <h1>CRYPTIX MD BOT</h1>
-    <p class="subtitle">Get connected in seconds with CRYPTIX MD</p>
-    
-    <div class="btn-grid">
-      <button onclick="window.open('/qr', '_self')" class="btn">
-        <i class="fas fa-qrcode"></i> QR Code
-      </button>
-      <button onclick="window.open('/pair', '_self')" class="btn">
-        <i class="fas fa-link"></i> Pair Code
-      </button>
-      <button onclick="handleClick(this, 'https://github.com/itsguruh')" class="btn">
-        <i class="fab fa-github"></i> GitHub
-      </button>
-      <button onclick="handleClick(this, 'https://whatsapp.com/channel/0029Vb6DmcwE50Ugs1acGO2s')" class="btn">
-        <i class="fab fa-whatsapp"></i> Channel
-      </button>
-    </div>
 
-    <!-- 🎵 Audio Player -->
-    <div id="audio-player">
-      <div class="audio-container">
-        <div class="audio-title">Background Music</div>
-        <div class="progress-container" id="progress-container">
-          <div class="progress-bar" id="progress-bar"></div>
-        </div>
-        <div class="time-display">
-          <span id="current-time">0:00</span>
-          <span id="duration">0:00</span>
-        </div>
-        <div class="control-buttons">
-          <button class="control-btn" id="play-pause">
-            <i class="fas fa-play"></i>
-          </button>
-        </div>
-      </div>
-      <audio id="audio-element">
-        <source src="https://files.catbox.moe/9gasul.mp3" type="audio/mpeg">
-      </audio>
-    </div>
+  <!-- Bot Logo -->
+  <img src="https://files.catbox.moe/f6q239.jpg" alt="CRYPTIX Bot Logo">
 
-    <p class="footer">© 2025 IT'S GURU TECH Inc. All rights reserved.</p>
+  <h1>Welcome to CRYPTIX-MD</h1>
+
+  <!-- Navigation Buttons -->
+  <div>
+    <button onclick="window.location.href='/pair'">Pair WhatsApp</button>
+    <button onclick="window.location.href='/qr'">Scan QR</button>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <!-- Music controls -->
+  <div id="music-controls">
+    <button onclick="toggleMusic()">⏯ Play / Pause Music</button>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bg-music" autoplay loop>
+    <source src="https://files.catbox.moe/0joaof.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
   <script>
-    // Particle background
-    particlesJS('particles-js', {
-      particles: {
-        number: { value: 80, density: { enable: true, value_area: 800 } },
-        color: { value: ["#8B4513", "#ffffff", "#000000"] },
-        shape: { type: "circle" },
-        opacity: { value: 0.5 },
-        size: { value: 3, random: true },
-        line_linked: { enable: true, distance: 150, color: "#8B4513", opacity: 0.4, width: 1 },
-        move: { enable: true, speed: 3 }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" } },
-        modes: { grab: { distance: 140, line_linked: { opacity: 1 } } }
-      },
-      retina_detect: true
-    });
-
-    // Button click effect
-    function handleClick(button, url) {
-      button.classList.add('clicked');
-      setTimeout(() => { window.open(url, '_blank'); }, 200);
-      setTimeout(() => { button.classList.remove('clicked'); }, 500);
-    }
-
-    // 🎵 Music player
-    const audio = document.getElementById('audio-element');
-    const playPauseBtn = document.getElementById('play-pause');
-    const playIcon = playPauseBtn.querySelector('i');
-    const progressBar = document.getElementById('progress-bar');
-    const progressContainer = document.getElementById('progress-container');
-    const currentTimeEl = document.getElementById('current-time');
-    const durationEl = document.getElementById('duration');
-
-    playPauseBtn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play();
-        playIcon.classList.replace('fa-play', 'fa-pause');
+    // Music controls
+    function toggleMusic() {
+      const music = document.getElementById("bg-music");
+      if (music.paused) {
+        music.play();
       } else {
-        audio.pause();
-        playIcon.classList.replace('fa-pause', 'fa-play');
+        music.pause();
       }
-    });
-
-    audio.addEventListener('timeupdate', () => {
-      const { currentTime, duration } = audio;
-      progressBar.style.width = `${(currentTime / duration) * 100}%`;
-      currentTimeEl.textContent = formatTime(currentTime);
-      durationEl.textContent = formatTime(duration);
-    });
-
-    function formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     }
   </script>
+
 </body>
-  </html>
+</html>
