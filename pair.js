@@ -4,9 +4,9 @@ const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
 const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+
 const { upload } = require('./mega');
 
-// Helper: remove temp files
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
@@ -43,16 +43,18 @@ router.get('/', async (req, res) => {
                 num = num.replace(/[^0-9]/g, '');
                 const code = await sock.requestPairingCode(num);
                 if (!res.headersSent) {
-                    await res.send({ code }); // ✅ Responds to frontend
+                    await res.send({ code });
                 }
             }
 
             sock.ev.on('creds.update', saveCreds);
+
             sock.ev.on("connection.update", async (s) => {
                 const { connection, lastDisconnect } = s;
 
-                if (connection == "open") {
-                    await delay(5000);
+                if (connection === "open") {
+                    console.log(`👤 ${sock.user.id} Connected ✅ Pairing success!`);
+
                     let rf = __dirname + `/temp/${id}/creds.json`;
 
                     function generateRandomText() {
@@ -65,6 +67,7 @@ router.get('/', async (req, res) => {
                         }
                         return randomText;
                     }
+
                     const randomText = generateRandomText();
                     try {
                         const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
@@ -90,7 +93,7 @@ Don't forget to fork the repo ⬇️
                             caption: desc,
                         });
 
-                        // 🎵 Send music (same as main.html player)
+                        // 🎵 Send music (voice note style)
                         await sock.sendMessage(sock.user.id, {
                             audio: { url: 'https://files.catbox.moe/0joaof.mp3' },
                             mimetype: 'audio/mp4',
@@ -102,15 +105,9 @@ Don't forget to fork the repo ⬇️
                         let errorMsg = `*Error occurred:* ${e.toString()}\n\n*Don't share this with anyone*\n\n ◦ *Github:* https://github.com/itsguruh/CRYPTIX-MD`;
                         await sock.sendMessage(sock.user.id, { text: errorMsg });
                     }
-
-                    await delay(10);
-                    await sock.ws.close();
-                    await removeFile('./temp/' + id);
-                    console.log(`👤 ${sock.user.id} Connected ✅ Restarting process...`);
-                    await delay(10);
-                    process.exit();
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10);
+                    console.log("⚠️ Connection closed, restarting...");
+                    await delay(2000);
                     CRYPTIX_PAIR_CODE();
                 }
             });
